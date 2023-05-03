@@ -1,0 +1,26 @@
+diff --git a/client/dhclient.c b/client/dhclient.c
+index 46dc3a71..9105c1cf 100644
+--- a/client/dhclient.c
++++ b/client/dhclient.c
+@@ -2992,7 +2992,7 @@ void send_request (cpp)
+ 				     client->packet_length, from, &destination,
+ 				     NULL);
+ 		if (result < 0) {
+-			log_error("%s:%d: Failed to send %d byte long packet "
++			log_info("%s:%d: Failed to send %d byte long packet "
+ 				  "over %s interface.", MDL,
+ 				  client->packet_length,
+ 				  fallback_interface->name);
+diff --git a/common/socket.c b/common/socket.c
+index 3953eac3..3aa00ed8 100644
+--- a/common/socket.c
++++ b/common/socket.c
+@@ -749,7 +749,7 @@ ssize_t send_packet (interface, packet, raw, len, from, to, hto)
+ 		 retry++ < 10);
+ #endif
+ 	if (result < 0) {
+-		log_error ("send_packet: %m");
++		log_info ("send_packet: %m");
+ 		if (errno == ENETUNREACH)
+ 			log_error ("send_packet: please consult README file%s",
+ 				   " regarding broadcast address.");
