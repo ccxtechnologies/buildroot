@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-POSTGRESQL_VERSION = 11.18
-POSTGRESQL_SOURCE = postgresql-$(POSTGRESQL_VERSION).tar.bz2
-POSTGRESQL_SITE = https://ftp.postgresql.org/pub/source/v$(POSTGRESQL_VERSION)
+POSTGRESQL_SITE = $(TOPDIR)/../thirdparty/postgres
+POSTGRESQL_SITE_METHOD = local
+
 POSTGRESQL_LICENSE = PostgreSQL
 POSTGRESQL_LICENSE_FILES = COPYRIGHT
 POSTGRESQL_CPE_ID_VENDOR = postgresql
@@ -16,7 +16,7 @@ POSTGRESQL_CONFIG_SCRIPTS = pg_config
 POSTGRESQL_CONF_ENV = \
 	ac_cv_type_struct_sockaddr_in6=yes \
 	LIBS=$(TARGET_NLS_LIBS)
-POSTGRESQL_CONF_OPTS = --disable-rpath
+POSTGRESQL_CONF_OPTS = --disable-rpath --with-extra-version=ccx
 POSTGRESQL_DEPENDENCIES = $(TARGET_NLS_DEPENDENCIES)
 
 # https://www.postgresql.org/docs/11/static/install-procedure.html:
