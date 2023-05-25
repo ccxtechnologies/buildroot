@@ -30,6 +30,15 @@ config BR2_PACKAGE_POSTGRESQL_FULL
 	help
 	  Build PostgreSQL, contrib, and documentation.
 
+if !BR2_PACKAGE_POSTGRESQL_FULL
+
+config BR2_PACKAGE_POSTGRESQL_STATS
+	bool "postgresql-stats"
+	help
+	  Build and install PostgreSQL contrib stats package
+
+endif
+
 endif
 
 comment "postgresql needs a toolchain w/ dynamic library, wchar"
