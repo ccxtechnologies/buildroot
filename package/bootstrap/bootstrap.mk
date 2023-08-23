@@ -21,8 +21,8 @@ define BOOTSTRAP_INSTALL_TARGET_CMDS
 		$(TARGET_DIR)/srv/http/bootstrap/bootstrap.min.css
 	$(INSTALL) -m 0644 -D $(@D)/css/bootstrap.min.css.map \
 		$(TARGET_DIR)/srv/http/bootstrap/bootstrap.min.css.map
-	$(INSTALL) -m 0644 -D $(@D)/js/bootstrap.min.js \
-		$(TARGET_DIR)/srv/http/bootstrap/bootstrap.min.js
+	$(INSTALL) -m 0644 -D $(@D)/js/bootstrap.bundle.min.js \
+		$(TARGET_DIR)/srv/http/bootstrap/bootstrap.bundle.min.js
 endef
 
 $(eval $(generic-package))
