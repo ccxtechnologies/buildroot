@@ -2451,7 +2451,6 @@ menu "External nginx modules"
 	source "package/nginx-headers-more/Config.in"
 	source "package/nginx-modsecurity/Config.in"
 	source "package/nginx-naxsi/Config.in"
-	source "package/nginx-substitutions/Config.in"
 	source "package/nginx-upload/Config.in"
 endmenu
 endif
