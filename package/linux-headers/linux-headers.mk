@@ -128,6 +128,8 @@ LINUX_HEADERS_INSTALL_STAGING = YES
 # linux-headers is part of the toolchain so disable the toolchain dependency
 LINUX_HEADERS_ADD_TOOLCHAIN_DEPENDENCY = NO
 
+LINUX_HEADERS_DEPENDENCIES = $(BR2_MAKE_HOST_DEPENDENCY)
+
 # For some architectures (eg. Arc, Cris, Hexagon, ia64, parisc,
 # score and xtensa), the Linux buildsystem tries to call the
 # cross-compiler, although it is not needed at all.
@@ -140,7 +142,7 @@ LINUX_HEADERS_ADD_TOOLCHAIN_DEPENDENCY = NO
 # of "its" headers
 define LINUX_HEADERS_CONFIGURE_CMDS
 	(cd $(@D); \
-		$(TARGET_MAKE_ENV) $(MAKE) \
+		$(TARGET_MAKE_ENV) $(BR2_MAKE) \
 			ARCH=$(KERNEL_ARCH) \
 			HOSTCC="$(HOSTCC)" \
 			HOSTCFLAGS="$(HOSTCFLAGS)" \
@@ -151,7 +153,7 @@ endef
 
 define LINUX_HEADERS_INSTALL_STAGING_CMDS
 	(cd $(@D); \
-		$(TARGET_MAKE_ENV) $(MAKE) \
+		$(TARGET_MAKE_ENV) $(BR2_MAKE) \
 			ARCH=$(KERNEL_ARCH) \
 			HOSTCC="$(HOSTCC)" \
 			HOSTCFLAGS="$(HOSTCFLAGS)" \

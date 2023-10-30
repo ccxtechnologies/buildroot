@@ -4,14 +4,14 @@
 #
 ################################################################################
 
-RNG_TOOLS_VERSION = 6.15
+RNG_TOOLS_VERSION = 6.16
 RNG_TOOLS_SITE = $(call github,nhorman,$(RNG_TOOLS_NAME),v$(RNG_TOOLS_VERSION))
 RNG_TOOLS_LICENSE = GPL-2.0
 RNG_TOOLS_LICENSE_FILES = COPYING
 RNG_TOOLS_CPE_ID_VENDOR = rng-tools_project
 RNG_TOOLS_SELINUX_MODULES = rngd
 
-RNG_TOOLS_DEPENDENCIES = host-pkgconf openssl
+RNG_TOOLS_DEPENDENCIES = host-pkgconf libcap openssl
 # From git
 RNG_TOOLS_AUTORECONF = YES
 
@@ -44,6 +44,18 @@ RNG_TOOLS_CONF_OPTS += --with-nistbeacon
 else
 RNG_TOOLS_CONF_OPTS += --without-nistbeacon
 endif
+
+ifeq ($(BR2_PACKAGE_RNG_TOOLS_QRYPT),y)
+RNG_TOOLS_DEPENDENCIES += jansson libcurl
+RNG_TOOLS_CONF_OPTS += --with-qrypt
+else
+RNG_TOOLS_CONF_OPTS += --without-qrypt
+endif
+
+define RNG_TOOLS_INSTALL_INIT_SYSV
+	$(INSTALL) -D -m 755 package/rng-tools/S21rngd \
+		$(TARGET_DIR)/etc/init.d/S21rngd
+endef
 
 define RNG_TOOLS_INSTALL_INIT_SYSTEMD
 	$(INSTALL) -D -m 644 package/rng-tools/rngd.service \
