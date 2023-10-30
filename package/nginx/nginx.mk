@@ -287,11 +287,6 @@ NGINX_DEPENDENCIES += nginx-modsecurity
 NGINX_CONF_OPTS += --add-module=$(NGINX_MODSECURITY_DIR)
 endif
 
-ifeq ($(BR2_PACKAGE_NGINX_SUBSTITUTIONS),y)
-NGINX_CONF_OPTS += --add-module=$(NGINX_SUBSTITUTIONS_DIR)
-NGINX_DEPENDENCIES += nginx-substitutions
-endif
-
 ifeq ($(BR2_PACKAGE_NGINX_HEADERS_MORE),y)
 NGINX_CONF_OPTS += --add-module=$(NGINX_HEADERS_MORE_DIR)
 NGINX_DEPENDENCIES += nginx-headers-more
