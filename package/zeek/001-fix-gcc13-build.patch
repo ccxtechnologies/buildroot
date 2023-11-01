@@ -1,0 +1,31 @@
+--- zeek-5.2.2/auxil/broker/caf/libcaf_core/caf/telemetry/metric_type.hpp.orig	2023-11-01 08:05:02.694967885 -0400
++++ zeek-5.2.2/auxil/broker/caf/libcaf_core/caf/telemetry/metric_type.hpp	2023-11-01 08:05:44.568577322 -0400
+@@ -4,6 +4,8 @@
+
+ #pragma once
+
++#include <cstdint>
++
+ namespace caf::telemetry {
+
+ enum class metric_type : uint8_t {
+--- zeek-5.2.2/auxil/broker/caf/libcaf_core/caf/detail/ripemd_160.hpp.orig	2023-11-01 08:04:32.931438284 -0400
++++ zeek-5.2.2/auxil/broker/caf/libcaf_core/caf/detail/ripemd_160.hpp	2023-11-01 08:05:23.431771290 -0400
+@@ -42,6 +42,7 @@
+
+ #include <array>
+ #include <string>
++#include <cstdint>
+
+ #include "caf/detail/core_export.hpp"
+
+--- zeek-5.2.2/src/WeirdState.h.orig	2023-11-01 08:12:49.941050418 -0400
++++ zeek-5.2.2/src/WeirdState.h	2023-11-01 08:13:09.184704273 -0400
+@@ -4,6 +4,7 @@
+
+ #include <string>
+ #include <unordered_map>
++#include <cstdint>
+
+ namespace zeek::detail
+ 	{

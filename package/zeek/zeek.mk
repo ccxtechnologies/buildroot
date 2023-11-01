@@ -4,19 +4,19 @@
 #
 ################################################################################
 
-ZEEK_VERSION = 4.1.1
+ZEEK_VERSION = 5.2.2
 ZEEK_SITE = https://download.zeek.org
 ZEEK_LICENSE = \
 	BSD-3-Clause (zeek, C++ Actor Framework, ConvertUTF.c, CardinalityCounter.cc, pybind11), \
 	Public Domain (sqlite), \
-	MIT (doctest, libkqueue, RapidJSON, tsl-ordered-map, bro_inet_ntop.c), \
+	MIT (doctest, filesystem, libkqueue, RapidJSON, tsl-ordered-map, bro_inet_ntop.c), \
 	LGPL-3.0+ (Multifast Project), \
 	BSD-2-Clause (event.h), \
 	BSD-3-Clause (in_cksum.cc) \
 	BSD-4-Clause (Patricia.c, strsep.c, bsd-getopt-long.c), \
 	Apache-2.0 (highwayhash, folly), \
 	MPL-2.0 (mozilla-ca-list.zeek)
-ZEEK_LICENSE_FILES = COPYING COPYING.3rdparty
+ZEEK_LICENSE_FILES = COPYING COPYING-3rdparty
 ZEEK_CPE_ID_VENDOR = zeek
 ZEEK_SUPPORTS_IN_SOURCE_BUILD = NO
 ZEEK_DEPENDENCIES = \
@@ -45,6 +45,9 @@ ZEEK_CONF_OPTS = \
 	-DBINPAC_EXE_PATH=$(HOST_DIR)/bin/binpac \
 	-DBROKER_DISABLE_DOCS=ON \
 	-DBROKER_DISABLE_TESTS=ON \
+	-DDISABLE_SPICY=ON \
+	-DENABLE_ZEEK_UNIT_TESTS=OFF \
+	-DGEN_ZAM_EXE_PATH=$(HOST_DIR)/bin/gen-zam \
 	-DINSTALL_AUX_TOOLS=ON \
 	-DZEEK_ETC_INSTALL_DIR=/etc
 
@@ -79,13 +82,15 @@ ZEEK_DEPENDENCIES += musl-fts
 ZEEK_CONF_OPTS += -DCMAKE_EXE_LINKER_FLAGS=-lfts
 endif
 
-HOST_ZEEK_MAKE_OPTS = binpac bifcl
+HOST_ZEEK_MAKE_OPTS = binpac bifcl gen-zam
 
 define HOST_ZEEK_INSTALL_CMDS
 	$(INSTALL) -D -m 0755 $(HOST_ZEEK_BUILDDIR)/auxil/bifcl/bifcl \
 		$(HOST_DIR)/bin/bifcl
 	$(INSTALL) -D -m 0755 $(HOST_ZEEK_BUILDDIR)/auxil/binpac/src/binpac \
 		$(HOST_DIR)/bin/binpac
+	$(INSTALL) -D -m 0755 $(HOST_ZEEK_BUILDDIR)/auxil/gen-zam/gen-zam \
+		$(HOST_DIR)/bin/gen-zam
 endef
 
 $(eval $(cmake-package))

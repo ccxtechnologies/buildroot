@@ -1,6 +1,8 @@
 # Locally computed:
-sha256  8c0afc999a8dd1c1f677a5cf818479b99c2d527e679e1ef99fb1b03f989c0373  zeek-4.1.1.tar.gz
+sha256  2421989adcee6a29f48a8f7272f719edbe954d66c2e86e3a52e79cae177f887c  zeek-6.0.2.tar.gz
+sha256  fb756f4b97809755b5dec38927c49477ff06aa647dfcd2b88025b1be1b6a358e  zeek-6.1.0.tar.gz
+sha256  e0c24157cc96a72e4bbe4cb28a93997438d4e8557b17c20d73fcd675d44615c6  zeek-5.2.2.tar.gz
 
 # Hash for license files:
-sha256  b2817e2fb935805ec9fc0e90c6b971efd810d9aedfc646bc5fcb535221e0266a  COPYING
-sha256  1a451eca7b3826a7df62991ba90dd6d23ff03d28c2eefb7f8c4f8b1eac97a61b  COPYING.3rdparty
+sha256  14c5057bb1f83c50db29323a9d5bb0f33db9c4d8b9806c070f5b0ca84f52694a  COPYING
+sha256  5be6b90c7a563e6ee8238354f3487206e19d8f299689ff2adce7bdd1a6919ab1  COPYING-3rdparty
