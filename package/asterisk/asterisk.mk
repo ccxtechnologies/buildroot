@@ -6,6 +6,7 @@
 
 ASTERISK_SITE = $(TOPDIR)/../thirdparty/asterisk
 ASTERISK_SITE_METHOD = local
+ASTERISK_VERSION = custom
 
 ASTERISK_SOUNDS_BASE_URL = http://downloads.asterisk.org/pub/telephony/sounds/releases
 ASTERISK_EXTRA_DOWNLOADS = \

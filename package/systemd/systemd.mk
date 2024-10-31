@@ -6,6 +6,8 @@
 
 SYSTEMD_SITE = $(TOPDIR)/../thirdparty/systemd
 SYSTEMD_SITE_METHOD = local
+SYSTEMD_VERSION = custom
+
 SYSTEMD_LICENSE = \
 	LGPL-2.1+, \
 	GPL-2.0+ (udev), \
