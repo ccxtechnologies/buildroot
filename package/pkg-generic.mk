@@ -566,6 +566,18 @@ endif
 $(2)_SRCDIR		       = $$($(2)_DIR)/$$($(2)_SUBDIR)
 $(2)_BUILDDIR		       ?= $$($(2)_SRCDIR)
 
+# Set override source directory for local packages, this is only required
+# because we don't define version or source for our local packages
+
+ifeq ($$($(2)_SITE_METHOD),local)
+ifeq ($$($(2)_OVERRIDE_SRCDIR),)
+$(2)_OVERRIDE_SRCDIR = $$($(2)_SITE)
+endif
+ifeq ($$($(2)_OVERRIDE_SRCDIR),)
+$$(error $(1) has local site method, but `$(2)_SITE` is not defined)
+endif
+endif
+
 ifneq ($$($(2)_OVERRIDE_SRCDIR),)
 $(2)_VERSION = custom
 endif
@@ -645,15 +657,6 @@ ifneq ($$($(2)_GIT_SUBMODULES),)
   $$(error $(2) declares having git sub-modules, but does not use the \
 	   'git' method (uses '$$($(2)_SITE_METHOD)' instead))
  endif
-endif
-
-ifeq ($$($(2)_SITE_METHOD),local)
-ifeq ($$($(2)_OVERRIDE_SRCDIR),)
-$(2)_OVERRIDE_SRCDIR = $$($(2)_SITE)
-endif
-ifeq ($$($(2)_OVERRIDE_SRCDIR),)
-$$(error $(1) has local site method, but `$(2)_SITE` is not defined)
-endif
 endif
 
 ifndef $(2)_LICENSE
