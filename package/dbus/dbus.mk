@@ -9,11 +9,9 @@
 DBUS_VERSION = 1.15.2
 DBUS_SOURCE = dbus-$(DBUS_VERSION).tar.xz
 DBUS_SITE = https://dbus.freedesktop.org/releases/dbus
-DBUS_SOURCE = dbus-$(DBUS_VERSION).tar.xz
 DBUS_LICENSE = AFL-2.1 or GPL-2.0+ (library, tools), GPL-2.0+ (tools)
 DBUS_LICENSE_FILES = COPYING
-DBUS_CPE_ID_VENDOR = d-bus_project
-DBUS_CPE_ID_PRODUCT = d-bus
+DBUS_CPE_ID_VENDOR = freedesktop
 DBUS_INSTALL_STAGING = YES
 
 define DBUS_PERMISSIONS
@@ -36,7 +34,8 @@ DBUS_CONF_OPTS = \
 	--disable-doxygen-docs \
 	--with-xml=expat \
 	--with-system-socket=/run/dbus/system_bus_socket \
-	--with-system-pid-file=/run/messagebus.pid
+	--with-system-pid-file=/run/messagebus.pid \
+	--runstatedir=/run
 
 ifeq ($(BR2_STATIC_LIBS),y)
 DBUS_CONF_OPTS += LIBS='-pthread'

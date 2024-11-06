@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RTL8822CS_VERSION = 758d861bfa4d18d39e4297c550fd684c9817eb0d
+RTL8822CS_VERSION = 40450f759c8a930d271b5f0a663685f412debc72
 RTL8822CS_SITE = $(call github,jethome-ru,rtl88x2cs,$(RTL8822CS_VERSION))
 RTL8822CS_LICENSE = GPL-2.0
 

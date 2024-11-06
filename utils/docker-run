@@ -21,12 +21,48 @@ declare -a docker_opts=(
     --user "$(id -u):$(id -g)"
     --workdir "$(pwd)"
     --security-opt label=disable
+    --network host
 )
 
 declare -a mountpoints=(
     "${MAIN_DIR}"
     "$(pwd)"
 )
+
+# We use the PODMAN_USERNS environment variable rather than using the
+# --userns command line argument because Fedora system may have the
+# podman-docker package installed, providing the "docker"
+# compatibility command.
+export PODMAN_USERNS="keep-id"
+
+if command -v docker >/dev/null; then
+    DOCKER="docker"
+elif command -v podman >/dev/null; then
+    DOCKER="podman"
+else
+    echo "ERROR: Neither docker nor podman available!" >&2
+    exit 1
+fi
+
+# curl lists (and recognises and uses) other types of *_proxy variables,
+# but only those make sense for Buildroot:
+for env in all_proxy http_proxy https_proxy ftp_proxy no_proxy; do
+    if [ "${!env}" ]; then
+        docker_opts+=( --env "${env}" )
+        # The lower-case variant takes precedence on the upper-case one
+        # (dixit curl)
+        continue
+    fi
+    # http_proxy is only lower-case (dixit curl)
+    if [ "${env}" = http_proxy ]; then
+        continue
+    fi
+    # All the others also exist in the upper-case variant
+    env="${env^^}"
+    if [ "${!env}" ]; then
+        docker_opts+=( --env "${env}" )
+    fi
+done
 
 # Empty GIT_DIR means that we are not in a workdir, *and* git is too old
 # to know about worktrees, so we're not in a worktree either. So it means
@@ -42,7 +78,7 @@ if [ "${GIT_DIR}" ]; then
 
     # 'repo' stores .git/objects separately.
     if [ -L "${GIT_DIR}/objects" ]; then
-        # GITDIR is already an absolute path, but for symetry
+        # GITDIR is already an absolute path, but for symmetry
         # with the above, keep the same cd+readlink construct.
         OBJECTS_DIR="$(cd "${MAIN_DIR}"; readlink -e "${GIT_DIR}/objects")"
         mountpoints+=( "${OBJECTS_DIR}" )
@@ -63,4 +99,4 @@ if tty -s; then
     docker_opts+=( -t )
 fi
 
-exec docker run "${docker_opts[@]}" "${IMAGE}" "${@}"
+exec ${DOCKER} run "${docker_opts[@]}" "${IMAGE}" "${@}"

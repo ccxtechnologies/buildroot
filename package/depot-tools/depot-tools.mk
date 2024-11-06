@@ -4,12 +4,11 @@
 #
 ################################################################################
 
-DEPOT_TOOLS_VERSION = 4e87f5bfe244e903f712408ea68dc3c3a6fe2d00
+DEPOT_TOOLS_VERSION = 1b58dc68659445b1d97d8341f8158be25eab4957
 DEPOT_TOOLS_SITE = https://chromium.googlesource.com/chromium/tools/depot_tools
 DEPOT_TOOLS_SITE_METHOD = git
 DEPOT_TOOLS_LICENSE = BSD-3-Clause
 DEPOT_TOOLS_LICENSE_FILES = LICENSE
-DEPOT_TOOLS_CPE_ID_VENDOR = google
 
 HOST_DEPOT_TOOLS_DEPENDENCIES = \
 	host-python3 \

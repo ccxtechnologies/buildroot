@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBNVME_VERSION = 1.6
+LIBNVME_VERSION = 1.11
 LIBNVME_SITE = $(call github,linux-nvme,libnvme,v$(LIBNVME_VERSION))
 LIBNVME_LICENSE = LGPL-2.1
 LIBNVME_LICENSE_FILES = COPYING
@@ -14,7 +14,7 @@ LIBNVME_CONF_OPTS += \
 	-Dtests=false
 
 ifeq ($(BR2_PACKAGE_PYTHON3),y)
-LIBNVME_DEPENDENCIES += python3
+LIBNVME_DEPENDENCIES += python3 host-swig
 LIBNVME_CONF_OPTS += -Dpython=enabled
 else
 LIBNVME_CONF_OPTS += -Dpython=disabled
