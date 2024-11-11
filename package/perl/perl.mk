@@ -113,6 +113,18 @@ define HOST_PERL_INSTALL_CMDS
 	$(HOST_MAKE_ENV) $(MAKE) -C $(@D) INSTALL_DEPENDENCE='' install
 endef
 
+# Fix RPATH After installation
+HOST_PERL_HOST_TOOLS = perl
+
+define HOST_PERL_FIX_RPATH
+	for f in $(addprefix $(HOST_DIR)/bin/,$(HOST_PERL_HOST_TOOLS)); do \
+		[ -e $$f ] || continue; \
+		$(HOST_DIR)/bin/patchelf --set-rpath $(HOST_DIR)/lib:$(HOST_DIR)/lib/perl $${f} \
+		|| exit 1; \
+	done
+endef
+HOST_PERL_POST_INSTALL_HOOKS += HOST_PERL_FIX_RPATH
+
 $(eval $(generic-package))
 $(eval $(host-generic-package))
 
