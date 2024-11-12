@@ -20,14 +20,6 @@ CHRONY_CONF_OPTS = \
 	--with-user=chrony \
 	$(if $(BR2_PACKAGE_CHRONY_DEBUG_LOGGING),--enable-debug,--disable-debug)
 
-define CHRONY_USERS
-	chrony -1 chrony -1 * /run/chrony - - Time daemon
-endef
-
-define CHRONY_PERMISSIONS
-	/var/lib/chrony d 755 chrony chrony - - - - -
-endef
-
 ifeq ($(BR2_PACKAGE_LIBNSS),y)
 CHRONY_DEPENDENCIES += libnss
 else
