@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-LIBDBI_DRIVERS_VERSION = 0bfae6c43134cf58dc89364328545982ca297abb
-LIBDBI_DRIVERS_SITE = https://git.code.sf.net/p/libdbi-drivers/libdbi-drivers
+LIBDBI_DRIVERS_VERSION = 4441b8
+LIBDBI_DRIVERS_SITE = https://git.code.sf.net/u/jengelh/libdbi-drivers
 LIBDBI_DRIVERS_SITE_METHOD = git
 LIBDBI_DRIVERS_LICENSE = LGPL-2.1+
 LIBDBI_DRIVERS_LICENSE_FILES = COPYING
