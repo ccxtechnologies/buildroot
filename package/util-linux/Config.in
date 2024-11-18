@@ -200,6 +200,7 @@ config BR2_PACKAGE_UTIL_LINUX_LOGIN
 	depends on BR2_USE_MMU # fork(), linux-pam
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # linux-pam
 	select BR2_PACKAGE_LINUX_PAM
+	select BR2_PACKAGE_LINUX_PAM_LASTLOG
 	help
 	  Begin a session on the system
 
