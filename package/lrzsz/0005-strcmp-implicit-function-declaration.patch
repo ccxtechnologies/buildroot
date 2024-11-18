@@ -1,0 +1,22 @@
+diff -Naru lrzsz-0.12.20.orig/lib/error.c lrzsz-0.12.20/lib/error.c
+--- lrzsz-0.12.20.orig/lib/error.c	2024-11-18 13:54:25.780577026 -0500
++++ lrzsz-0.12.20/lib/error.c	2024-11-18 13:52:16.622691938 -0500
+@@ -26,6 +26,7 @@
+ #if HAVE_VPRINTF || HAVE_DOPRNT || _LIBC
+ # if __STDC__
+ #  include <stdarg.h>
++#  include <string.h>
+ #  define VA_START(args, lastarg) va_start(args, lastarg)
+ # else
+ #  include <varargs.h>
+diff -Naru lrzsz-0.12.20.orig/src/zglobal.h lrzsz-0.12.20/src/zglobal.h
+--- lrzsz-0.12.20.orig/src/zglobal.h	2024-11-18 13:54:35.670670415 -0500
++++ lrzsz-0.12.20/src/zglobal.h	2024-11-18 13:52:44.919625343 -0500
+@@ -55,6 +55,7 @@
+ 
+ #ifdef __STDC__
+ #include <stdarg.h>
++#include <string.h>
+ #else
+ #include <varargs.h>
+ #endif
