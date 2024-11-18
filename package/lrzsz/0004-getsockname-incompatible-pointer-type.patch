@@ -1,0 +1,34 @@
+--- lrzsz-0.12.20/src/tcp.c.orig	2024-11-18 10:31:01.014384542 -0500
++++ lrzsz-0.12.20/src/tcp.c	2024-11-18 10:32:36.708600455 -0500
+@@ -49,14 +49,14 @@
+  * Get a TCP socket, bind it, listen, figure out the port,
+  * and build the magic string for lrz in "buf".
+  */
+-int 
++int
+ tcp_server (char *buf)
+ {
+ 	int sock;
+ 	struct sockaddr_in s;
+ 	struct sockaddr_in t;
+ 	int on=1;
+-	size_t len;
++	socklen_t len;
+ 
+ 	if ((sock = socket (AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
+ 		error(1,errno,"socket");
+@@ -86,12 +86,12 @@
+ }
+ 
+ /* server/lsz: accept a connection */
+-int 
++int
+ tcp_accept (int d)
+ {
+ 	int so;
+ 	struct  sockaddr_in s;
+-	size_t namelen;
++	socklen_t namelen;
+ 	int num=0;
+ 
+ 	namelen = sizeof(s);
