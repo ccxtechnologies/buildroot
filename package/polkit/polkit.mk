@@ -66,6 +66,10 @@ define POLKIT_INSTALL_INIT_SYSTEMD
 	$(INSTALL) -D -m 644 $(POLKIT_PKGDIR)/polkit.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/polkit.service
 
+	mkdir -p $(TARGET_DIR)/usr/lib/tmpfiles.d
+	echo "d /etc/polkit-1/rules.d 700 polkitd root - -" > \
+		$(TARGET_DIR)/usr/lib/tmpfiles.d/polkit-tmpfiles.conf
+
 endef
 
 define POLKIT_INSTALL_INIT_SYSV
