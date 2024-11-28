@@ -1,0 +1,12 @@
+--- lxc-5.0.3/src/lxc/pam/pam_cgfs.c.orig	2024-11-28 10:51:55.579898623 -0500
++++ lxc-5.0.3/src/lxc/pam/pam_cgfs.c	2024-11-28 10:55:47.059202994 -0500
+@@ -226,6 +226,9 @@
+ 			goto next;
+ 
+ 		if (do_mkdir(path, 0755) < 0) {
++			if (errno == EEXIST) {
++				goto next;
++			}
+ 			pam_cgfs_debug("Failed to create %s: %s\n", path, strerror(errno));
+ 			return false;
+ 		}
