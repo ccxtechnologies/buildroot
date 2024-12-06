@@ -1,0 +1,124 @@
+--- latencytop-0.5/fsync.c.orig	2024-12-06 15:04:12.725878385 -0500
++++ latencytop-0.5/fsync.c	2024-12-06 15:04:44.899443325 -0500
+@@ -37,7 +37,7 @@
+ 
+ #include "latencytop.h"
+ 
+-struct fsync_process { 
++struct fsync_process {
+ 	char name[PATH_MAX];
+ 	int fsync_count;
+ 	GList *files;
+@@ -51,7 +51,7 @@
+ static GList *fsync_data;
+ 
+ 
+-static chain_file(struct fsync_process *proc, char *filename)
++static void chain_file(struct fsync_process *proc, char *filename)
+ {
+ 	struct fsync_files *file;
+ 	GList *item;
+@@ -75,7 +75,7 @@
+ 	proc->files = g_list_append(proc->files, file);
+ }
+ 
+-static report_file(char *process, char *file)
++static void report_file(char *process, char *file)
+ {
+ 	struct fsync_process *proc;
+ 	GList *item;
+@@ -148,14 +148,14 @@
+  * mount -t debugfs none /sys/kernel/debug/
+  * cd /sys/kernel/debug/tracing
+  * echo fsync > current_tracer
+- * echo ftrace_printk > iter_ctrl 
++ * echo ftrace_printk > iter_ctrl
+  * echo 1 > tracing_enabled
+  */
+ 	ret = system("/bin/mount -t debugfs none /sys/kernel/debug/");
+-	if (!ret) 
++	if (!ret)
+ 		return -1;
+-	write_to_file("/sys/kernel/debug/tracing/current_tracer", "fsync");	
+-	write_to_file("/sys/kernel/debug/tracing/iter_ctrl", "ftrace_printk");	
++	write_to_file("/sys/kernel/debug/tracing/current_tracer", "fsync");
++	write_to_file("/sys/kernel/debug/tracing/iter_ctrl", "ftrace_printk");
+ 	write_to_file("/sys/kernel/debug/tracing/tracing_enabled", "1");
+ }
+ 
+@@ -169,7 +169,7 @@
+ static WINDOW *global_window;
+ 
+ 
+-static void fsync_cleanup_curses(void) 
++static void fsync_cleanup_curses(void)
+ {
+ 	endwin();
+ }
+@@ -190,12 +190,12 @@
+ 
+ static int maxx, maxy;
+ 
+-static void fsync_setup_windows(void) 
++static void fsync_setup_windows(void)
+ {
+ 	int midy;
+ 	getmaxyx(stdscr, maxy, maxx);
+ 
+-	zap_windows();	
++	zap_windows();
+ 
+ 	title_bar_window = subwin(stdscr, 1, maxx, 0, 0);
+ 	global_window = subwin(stdscr, maxy-3 , maxx, 2, 0);
+@@ -205,7 +205,7 @@
+ }
+ 
+ #if 0 /* Dead code */
+-static void fsync_initialize_curses(void) 
++static void fsync_initialize_curses(void)
+ {
+ 	if (noui)
+ 		return;
+@@ -225,15 +225,15 @@
+ 	init_pair(PT_COLOR_YELLOW, COLOR_WHITE, COLOR_YELLOW);
+ 	init_pair(PT_COLOR_GREEN, COLOR_WHITE, COLOR_GREEN);
+ 	init_pair(PT_COLOR_BRIGHT, COLOR_WHITE, COLOR_BLACK);
+-	
++
+ 	atexit(cleanup_curses);
+ }
+ #endif
+ 
+-static void show_title_bar(void) 
++static void show_title_bar(void)
+ {
+ 	wattrset(title_bar_window, COLOR_PAIR(PT_COLOR_HEADER_BAR));
+-	wbkgd(title_bar_window, COLOR_PAIR(PT_COLOR_HEADER_BAR));   
++	wbkgd(title_bar_window, COLOR_PAIR(PT_COLOR_HEADER_BAR));
+ 	werase(title_bar_window);
+ 
+ 	mvwprintw(title_bar_window, 0, 0,  "   LatencyTOP -- fsync() view... type 'F' to exit");
+@@ -259,7 +259,7 @@
+ 	while (item && i < maxy-6) {
+ 		proc = item->data;
+ 		item = g_list_next(item);
+-		
++
+ 		mvwprintw(global_window, y, 0, "%s (%i)", proc->name, proc->fsync_count);
+ 		y++;
+ 		item2 = proc->files;
+@@ -347,11 +347,11 @@
+ 
+ 		if (key) {
+ 			char keychar;
+-			keychar = fgetc(stdin);		
++			keychar = fgetc(stdin);
+ 			if (keychar == 27) {
+-				keychar = fgetc(stdin);	
++				keychar = fgetc(stdin);
+ 				if (keychar==79)
+-					keychar = fgetc(stdin);	
++					keychar = fgetc(stdin);
+ 			}
+ 			keychar = toupper(keychar);
+ 			if (keychar == 'F') {
