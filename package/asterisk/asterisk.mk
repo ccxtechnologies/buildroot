@@ -34,7 +34,6 @@ ASTERISK_DEPENDENCIES = \
 	libcurl \
 	libedit \
 	libjwt \
-	libpjsip \
 	libxml2 \
 	sqlite \
 	util-linux
@@ -102,8 +101,6 @@ ASTERISK_CONF_OPTS = \
 	--without-unbound \
 	--without-vpb \
 	--without-x11 \
-	--with-pjproject-bundled \
-	--with-pjproject \
 	--with-crypt \
 	--with-jansson \
 	--with-libcurl \
@@ -111,8 +108,8 @@ ASTERISK_CONF_OPTS = \
 	--with-libjwt="$(STAGING_DIR)/usr" \
 	--with-libxml2 \
 	--with-libedit="$(STAGING_DIR)/usr" \
-	--without-pjproject-bundled \
-	--with-pjproject="$(STAGING_DIR)/usr" \
+	--with-pjproject \
+	--with-pjproject-bundled \
 	--with-sqlite3="$(STAGING_DIR)/usr" \
 	--with-sounds-cache=$(ASTERISK_DL_DIR)
 
