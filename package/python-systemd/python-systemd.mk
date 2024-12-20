@@ -11,5 +11,5 @@ PYTHON_SYSTEMD_SETUP_TYPE = setuptools
 PYTHON_SYSTEMD_LICENSE = LGPL-2.1
 PYTHON_SYSTEMD_LICENSE_FILES = LICENSE.txt
 PYTHON_SYSTEMD_DEPENDENCIES = systemd # To be able to link against libsystemd
-
+PYTHON_SYSTEMD_CPE_ID_VERSION = None
 $(eval $(python-package))
