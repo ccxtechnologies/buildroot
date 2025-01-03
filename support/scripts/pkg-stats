@@ -651,7 +651,7 @@ def check_package_cves(nvd_path, packages):
         if not pkg.current_version:
             pkg.status['cve'] = ("na", "no version information available")
             continue
-        if pkg.cpeid:
+        if pkg.cpeid and pkg.cpeid != "NA":
             cpe_product = cvecheck.cpe_product(pkg.cpeid)
             cpe_product_pkgs[cpe_product].append(pkg)
         else:
