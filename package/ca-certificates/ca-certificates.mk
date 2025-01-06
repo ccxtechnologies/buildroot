@@ -10,6 +10,7 @@ CA_CERTIFICATES_SITE = https://snapshot.debian.org/archive/debian/20230317T20501
 CA_CERTIFICATES_DEPENDENCIES = host-openssl host-python3
 CA_CERTIFICATES_LICENSE = GPL-2.0+ (script), MPL-2.0 (data)
 CA_CERTIFICATES_LICENSE_FILES = debian/copyright
+CA_CERTIFICATES_CPE_ID = NA
 
 define CA_CERTIFICATES_BUILD_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) clean all
