@@ -10,5 +10,7 @@ PYTHON_CONFIGOBJ_SITE = https://files.pythonhosted.org/packages/f5/c4/c7f9e41bc2
 PYTHON_CONFIGOBJ_SETUP_TYPE = setuptools
 PYTHON_CONFIGOBJ_LICENSE = BSD-3-Clause
 PYTHON_CONFIGOBJ_LICENSE_FILES = LICENSE
+PYTHON_CONFIGOBJ_CPE_ID_VENDOR = configobj_project
+PYTHON_CONFIGOBJ_CPE_ID_PRODUCT = configobj
 
 $(eval $(python-package))
