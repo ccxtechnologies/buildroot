@@ -12,7 +12,6 @@ DAQ_SOURCE = daq-2.0.7-modified.tar.gz
 DAQ_SITE = https://www.snort.org/downloads/snort/daq-$(DAQ_VERSION).tar.gz?buildroot-path=filename
 DAQ_LICENSE = GPL-2.0
 DAQ_LICENSE_FILES = COPYING
-DAQ_CPE_ID = NA
 DAQ_INSTALL_STAGING = YES
 DAQ_DEPENDENCIES = host-bison host-flex libdnet
 # 0002-parallel-grammar.patch
