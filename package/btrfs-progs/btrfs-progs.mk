@@ -11,7 +11,6 @@ BTRFS_PROGS_DEPENDENCIES = host-pkgconf lzo util-linux zlib
 BTRFS_PROGS_CONF_OPTS = --disable-backtrace --disable-python
 BTRFS_PROGS_LICENSE = GPL-2.0, LGPL-2.1+ (libbtrfsutil)
 BTRFS_PROGS_LICENSE_FILES = COPYING libbtrfsutil/COPYING
-BTRFS_PROGS_CPE_ID = NA
 BTRFS_PROGS_INSTALL_STAGING = YES
 
 # 0002-btrfs-progs-add-uClibc-ng-compatibility-for-printf-f.patch
