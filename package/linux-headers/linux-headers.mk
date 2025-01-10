@@ -122,7 +122,7 @@ LINUX_HEADERS_LICENSE_FILES = COPYING
 endif
 LINUX_HEADERS_CPE_ID_VENDOR = linux
 LINUX_HEADERS_CPE_ID_PRODUCT = linux_kernel
-
+LINUX_HEADERS_CPE_ID_VERSION = 6.1.115
 LINUX_HEADERS_INSTALL_STAGING = YES
 
 # linux-headers is part of the toolchain so disable the toolchain dependency
