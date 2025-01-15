@@ -10,6 +10,8 @@ PYTHON_CERTIFI_SITE = https://files.pythonhosted.org/packages/b0/ee/9b19140fe824
 PYTHON_CERTIFI_SETUP_TYPE = setuptools
 PYTHON_CERTIFI_LICENSE = ISC (Python code), MPL-2.0 (cacert.pem)
 PYTHON_CERTIFI_LICENSE_FILES = LICENSE
+PYTHON_CERTIFI_CPE_ID_VENDOR = kennethreitz
+PYTHON_CERTIFI_CPE_ID_PRODUCT = certifi
 
 $(eval $(python-package))
 $(eval $(host-python-package))

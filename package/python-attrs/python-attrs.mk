@@ -10,6 +10,8 @@ PYTHON_ATTRS_SITE = https://files.pythonhosted.org/packages/fc/0f/aafca9af9315ae
 PYTHON_ATTRS_SETUP_TYPE = hatch
 PYTHON_ATTRS_LICENSE = MIT
 PYTHON_ATTRS_LICENSE_FILES = LICENSE
+PYTHON_ATTRS_CPE_ID_VENDOR = attrs_project
+PYTHON_ATTRS_CPE_ID_PRODUCT = attrs
 PYTHON_ATTRS_DEPENDENCIES = \
 	host-python-hatch-fancy-pypi-readme \
 	host-python-hatch-vcs
