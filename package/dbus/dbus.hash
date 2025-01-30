@@ -1,7 +1,7 @@
 # Locally calculated after checking pgp signature
-# https://dbus.freedesktop.org/releases/dbus/dbus-1.14.10.tar.xz.asc
+# https://dbus.freedesktop.org/releases/dbus/dbus-1.16.0.tar.xz.asc
 # using key 36EC5A6448A4F5EF79BEFE98E05AE1478F814C4F
-sha256  7e640803084af59f5e477b7ded11fd888b5380910a895c51ca3aedd63c0626ca  dbus-1.15.2.tar.xz
+sha256  9f8ca5eb51cbe09951aec8624b86c292990ae2428b41b856e2bed17ec65c8849  dbus-1.16.0.tar.xz
 
 # Locally calculated
-sha256  f0e70e3678a34f6f7ab43af6bc0352ecb2c1b687bbd72e4bdcf6f9d2ea674ca1  COPYING
+sha256  150e5d08e1cb5e62b65967d7931acad2c42d98ec1bbb584bebb01921cbc853c2  COPYING
