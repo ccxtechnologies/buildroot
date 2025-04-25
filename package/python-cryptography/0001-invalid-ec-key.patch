@@ -1,0 +1,16 @@
+--- python-cryptography-43.0.3/src/rust/src/backend/ec.rs.orig	2025-04-24 15:38:15.328848911 -0400
++++ python-cryptography-43.0.3/src/rust/src/backend/ec.rs	2025-04-24 15:38:55.454392444 -0400
+@@ -134,8 +134,11 @@
+     py: pyo3::Python<'_>,
+     pkey: &openssl::pkey::PKeyRef<openssl::pkey::Private>,
+ ) -> CryptographyResult<ECPrivateKey> {
+-    let curve = py_curve_from_curve(py, pkey.ec_key().unwrap().group())?;
+-    check_key_infinity(&pkey.ec_key().unwrap())?;
++    let ec_key = pkey
++        .ec_key()
++        .map_err(|_| pyo3::exceptions::PyValueError::new_err("Invalid EC key"))?;
++    let curve = py_curve_from_curve(py, ec_key.group())?;
++    check_key_infinity(&ec_key)?;
+     Ok(ECPrivateKey {
+         pkey: pkey.to_owned(),
+         curve: curve.into(),
