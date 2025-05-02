@@ -1,0 +1,12 @@
+--- zeek-5.2.2/CMakeLists.txt.orig	2025-05-02 10:33:02.839233606 -0400
++++ zeek-5.2.2/CMakeLists.txt	2025-05-02 10:33:32.465172046 -0400
+@@ -420,9 +420,6 @@
+ FindRequiredPackage(BISON)
+ FindRequiredPackage(PCAP)
+ FindRequiredPackage(OpenSSL)
+-if ( NOT MSVC )
+-    FindRequiredPackage(BIND)
+-endif ()
+ FindRequiredPackage(ZLIB)
+ 
+ # Installation directory for the distribution's Python modules. An
