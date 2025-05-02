@@ -11,4 +11,7 @@ M4_LICENSE = GPL-3.0+
 M4_LICENSE_FILES = COPYING
 HOST_M4_CONF_OPTS = --disable-static
 
+# This should be removed with 1.4.20
+HOST_M4_CONF_ENV = CFLAGS="$(HOST_CFLAGS) -std=gnu17"
+
 $(eval $(host-autotools-package))
