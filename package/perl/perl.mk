@@ -100,6 +100,9 @@ HOST_PERL_CONF_OPTS = \
 	-Dprefix="$(HOST_DIR)" \
 	-Dcc="$(HOSTCC)"
 
+HOST_PERL_DEPENDENCIES = \
+	host-patchelf
+
 define HOST_PERL_CONFIGURE_CMDS
 	(cd $(@D); $(HOST_MAKE_ENV) HOSTCC='$(HOSTCC_NOCCACHE)' \
 		./Configure $(HOST_PERL_CONF_OPTS))
