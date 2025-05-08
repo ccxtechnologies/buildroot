@@ -18,9 +18,7 @@ BASH_CONF_OPTS = \
 	--without-bash-malloc
 
 # This should be removed with next bash release
-BASH_CONF_ENV = \
-	CFLAGS="$(TARGET_CFLAGS) -std=gnu17" \
-	CFLAGS_FOR_BUILD="$(HOST_CFLAGS) -std=gnu17"
+BASH_CONF_ENV = CFLAGS_FOR_BUILD="$(HOST_CFLAGS) -std=gnu17"
 
 BASH_CONF_ENV += \
 	ac_cv_rl_prefix="$(STAGING_DIR)" \
