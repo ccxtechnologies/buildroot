@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-FMC_VERSION = LSDK-21.08
-FMC_SITE = $(call github,nxp-qoriq,fmc,$(FMC_VERSION))
+FMC_SITE = $(TOPDIR)/../thirdparty/layerscape-fmc
+FMC_SITE_METHOD = local
 FMC_LICENSE = MIT
 FMC_LICENSE_FILES = COPYING
 FMC_DEPENDENCIES = libxml2 tclap fmlib
@@ -24,6 +24,9 @@ endif
 
 # fmc's platform is the same as fmlib's.
 FMC_PLATFORM = $(call qstrip,$(BR2_PACKAGE_FMLIB_PLATFORM))
+ifeq ($(FMC_PLATFORM),arm)
+FMC_PLATFORM = LS1043
+endif
 
 define FMC_BUILD_CMDS
 	$(SED) "s:LS1043:$(FMC_PLATFORM):g" $(@D)/source/Makefile
