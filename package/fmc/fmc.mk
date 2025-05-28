@@ -8,6 +8,8 @@ FMC_SITE = $(TOPDIR)/../thirdparty/layerscape-fmc
 FMC_SITE_METHOD = local
 FMC_LICENSE = MIT
 FMC_LICENSE_FILES = COPYING
+FMC_CPE_ID_VENDOR = nxp
+FMC_CPE_ID_VERSION = lf-6.12.3-1.0.0
 FMC_DEPENDENCIES = libxml2 tclap fmlib
 
 FMC_MAKE_OPTS = \
