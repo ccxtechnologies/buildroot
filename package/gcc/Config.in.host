@@ -113,6 +113,14 @@ config BR2_TOOLCHAIN_BUILDROOT_FORTRAN
 	  Fortran language and you want Fortran libraries to be
 	  installed on your target system.
 
+config BR2_TOOLCHAIN_BUILDROOT_ADA
+	bool "Enable Ada support"
+	select BR2_TOOLCHAIN_HAS_ADA
+	help
+	  Enable this option if you want your toolchain to support the
+	  Ada language and you want Ada libraries to be
+	  installed on your target system.
+
 config BR2_TOOLCHAIN_BUILDROOT_DLANG
 	bool "Enable D language support"
 	depends on BR2_GCC_SUPPORTS_DLANG

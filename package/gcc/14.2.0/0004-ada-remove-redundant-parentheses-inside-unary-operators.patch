@@ -1,0 +1,921 @@
+diff --git a/gcc/ada/checks.adb b/gcc/ada/checks.adb
+index 7a5bc71f36b2..dcfcaa33bcc4 100644
+--- a/gcc/ada/checks.adb
++++ b/gcc/ada/checks.adb
+@@ -2076,7 +2076,7 @@ package body Checks is
+          Lo := Succ (Expr_Type, UR_From_Uint (Ifirst - 1));
+          Lo_OK := True;
+
+-      elsif abs (Ifirst) < Max_Bound then
++      elsif abs Ifirst < Max_Bound then
+          Lo := UR_From_Uint (Ifirst) - Ureal_Half;
+          Lo_OK := (Ifirst > 0);
+
+@@ -2120,7 +2120,7 @@ package body Checks is
+          Hi := Pred (Expr_Type, UR_From_Uint (Ilast + 1));
+          Hi_OK := True;
+
+-      elsif abs (Ilast) < Max_Bound then
++      elsif abs Ilast < Max_Bound then
+          Hi := UR_From_Uint (Ilast) + Ureal_Half;
+          Hi_OK := (Ilast < 0);
+       else
+@@ -6243,7 +6243,7 @@ package body Checks is
+       --  do the corresponding optimizations later on when applying the checks.
+
+       if Mode in Minimized_Or_Eliminated then
+-         if not (Overflow_Checks_Suppressed (Etype (N)))
++         if not Overflow_Checks_Suppressed (Etype (N))
+            and then not (Is_Entity_Name (N)
+                           and then Overflow_Checks_Suppressed (Entity (N)))
+          then
+diff --git a/gcc/ada/exp_dist.adb b/gcc/ada/exp_dist.adb
+index f3cc4b4f9afc..694fbe47daba 100644
+--- a/gcc/ada/exp_dist.adb
++++ b/gcc/ada/exp_dist.adb
+@@ -8626,7 +8626,7 @@ package body Exp_Dist is
+             --  The RACW case is taken care of by Exp_Dist.Add_RACW_From_Any
+
+             pragma Assert
+-              (not (Is_Remote_Access_To_Class_Wide_Type (Typ)));
++              (not Is_Remote_Access_To_Class_Wide_Type (Typ));
+
+             Use_Opaque_Representation := False;
+
+diff --git a/gcc/ada/exp_imgv.adb b/gcc/ada/exp_imgv.adb
+index a8c0fa0c1e68..c7cf06ba444f 100644
+--- a/gcc/ada/exp_imgv.adb
++++ b/gcc/ada/exp_imgv.adb
+@@ -1615,9 +1615,9 @@ package body Exp_Imgv is
+          end if;
+
+       elsif Is_Decimal_Fixed_Point_Type (Rtyp) then
+-         if Esize (Rtyp) <= 32 and then abs (Scale_Value (Rtyp)) <= 9 then
++         if Esize (Rtyp) <= 32 and then abs Scale_Value (Rtyp) <= 9 then
+             Vid := RE_Value_Decimal32;
+-         elsif Esize (Rtyp) <= 64 and then abs (Scale_Value (Rtyp)) <= 18 then
++         elsif Esize (Rtyp) <= 64 and then abs Scale_Value (Rtyp) <= 18 then
+             Vid := RE_Value_Decimal64;
+          else
+             Vid := RE_Value_Decimal128;
+diff --git a/gcc/ada/exp_util.adb b/gcc/ada/exp_util.adb
+index d36df94e62b3..b8c6a9f8848b 100644
+--- a/gcc/ada/exp_util.adb
++++ b/gcc/ada/exp_util.adb
+@@ -6100,7 +6100,7 @@ package body Exp_Util is
+
+          if not Found
+            and then Present (Interfaces (Typ))
+-           and then not (Is_Empty_Elmt_List (Interfaces (Typ)))
++           and then not Is_Empty_Elmt_List (Interfaces (Typ))
+          then
+             --  Skip the tag associated with the primary table
+
+diff --git a/gcc/ada/libgnarl/a-reatim.adb b/gcc/ada/libgnarl/a-reatim.adb
+index f475ab5f2654..6df99c96a771 100644
+--- a/gcc/ada/libgnarl/a-reatim.adb
++++ b/gcc/ada/libgnarl/a-reatim.adb
+@@ -216,7 +216,7 @@ is
+       --  Special-case for Time_First, whose absolute value is anomalous,
+       --  courtesy of two's complement.
+
+-      T_Val := (if T = Time_First then abs (Time_Last) else abs (T));
++      T_Val := (if T = Time_First then abs Time_Last else abs T);
+
+       --  Extract the integer part of T, truncating towards zero
+
+diff --git a/gcc/ada/libgnat/a-coinve.adb b/gcc/ada/libgnat/a-coinve.adb
+index 68bb6a49a000..7d259db671c6 100644
+--- a/gcc/ada/libgnat/a-coinve.adb
++++ b/gcc/ada/libgnat/a-coinve.adb
+@@ -1023,8 +1023,8 @@ is
+             while Source.Last >= Index_Type'First loop
+                pragma Assert
+                  (Source.Last <= Index_Type'First
+-                   or else not (Is_Less (SA (Source.Last),
+-                                         SA (Source.Last - 1))));
++                   or else not Is_Less (SA (Source.Last),
++                                        SA (Source.Last - 1)));
+
+                if I < Index_Type'First then
+                   declare
+@@ -1041,7 +1041,7 @@ is
+
+                pragma Assert
+                  (I <= Index_Type'First
+-                    or else not (Is_Less (TA (I), TA (I - 1))));
++                    or else not Is_Less (TA (I), TA (I - 1)));
+
+                declare
+                   Src : Element_Access renames SA (Source.Last);
+diff --git a/gcc/ada/libgnat/a-nbnbre.adb b/gcc/ada/libgnat/a-nbnbre.adb
+index 66fd136e9b36..60e49ba703f9 100644
+--- a/gcc/ada/libgnat/a-nbnbre.adb
++++ b/gcc/ada/libgnat/a-nbnbre.adb
+@@ -132,7 +132,7 @@ package body Ada.Numerics.Big_Numbers.Big_Reals is
+
+       function To_Big_Real (Arg : Num) return Valid_Big_Real is
+
+-         A : constant Num'Base := abs (Arg);
++         A : constant Num'Base := abs Arg;
+          E : constant Integer  := Num'Exponent (A);
+          F : constant Num'Base := Num'Fraction (A);
+          M : constant Natural  := Num'Machine_Mantissa;
+@@ -229,7 +229,7 @@ package body Ada.Numerics.Big_Numbers.Big_Reals is
+
+          --  Local variables
+
+-         V : Big_Real := abs (Arg);
++         V : Big_Real := abs Arg;
+          E : Integer  := 0;
+          L : Integer;
+
+diff --git a/gcc/ada/libgnat/a-ngcoty.adb b/gcc/ada/libgnat/a-ngcoty.adb
+index 206737617d9b..a8b1ffc19e26 100644
+--- a/gcc/ada/libgnat/a-ngcoty.adb
++++ b/gcc/ada/libgnat/a-ngcoty.adb
+@@ -67,7 +67,7 @@ package body Ada.Numerics.Generic_Complex_Types is
+          --  their operands could overflow. Given that all operations on NaNs
+          --  return false, the test can only be written thus.
+
+-         if not (abs (X) <= R'Last) then
++         if not (abs X <= R'Last) then
+             pragma Annotate
+               (CodePeer, Intentional,
+                "test always false", "test for infinity");
+@@ -76,7 +76,7 @@ package body Ada.Numerics.Generic_Complex_Types is
+                              (Left.Im / Scale) * (Right.Im / Scale));
+          end if;
+
+-         if not (abs (Y) <= R'Last) then
++         if not (abs Y <= R'Last) then
+             pragma Annotate
+               (CodePeer, Intentional,
+                "test always false", "test for infinity");
+@@ -599,7 +599,7 @@ package body Ada.Numerics.Generic_Complex_Types is
+       exception
+          when Constraint_Error =>
+             pragma Assert (X.Re /= 0.0);
+-            return R (abs (X.Re))
++            return R (abs X.Re)
+               * Aux.Sqrt (1.0 + (R (X.Im) / R (X.Re)) ** 2);
+       end;
+
+@@ -614,7 +614,7 @@ package body Ada.Numerics.Generic_Complex_Types is
+       exception
+          when Constraint_Error =>
+             pragma Assert (X.Im /= 0.0);
+-            return R (abs (X.Im))
++            return R (abs X.Im)
+               * Aux.Sqrt (1.0 + (R (X.Re) / R (X.Im)) ** 2);
+       end;
+
+@@ -625,29 +625,29 @@ package body Ada.Numerics.Generic_Complex_Types is
+       if Re2 = 0.0 then
+
+          if X.Re = 0.0 then
+-            return abs (X.Im);
++            return abs X.Im;
+
+          elsif Im2 = 0.0 then
+
+             if X.Im = 0.0 then
+-               return abs (X.Re);
++               return abs X.Re;
+
+             else
+-               if abs (X.Re) > abs (X.Im) then
+-                  return R (abs (X.Re))
++               if abs X.Re > abs X.Im then
++                  return R (abs X.Re)
+                     * Aux.Sqrt (1.0 + (R (X.Im) / R (X.Re)) ** 2);
+                else
+-                  return R (abs (X.Im))
++                  return R (abs X.Im)
+                     * Aux.Sqrt (1.0 + (R (X.Re) / R (X.Im)) ** 2);
+                end if;
+             end if;
+
+          else
+-            return abs (X.Im);
++            return abs X.Im;
+          end if;
+
+       elsif Im2 = 0.0 then
+-         return abs (X.Re);
++         return abs X.Re;
+
+       --  In all other cases, the naive computation will do
+
+diff --git a/gcc/ada/libgnat/a-ngelfu.adb b/gcc/ada/libgnat/a-ngelfu.adb
+index 8f89cb0e5259..7ce2a4c87cef 100644
+--- a/gcc/ada/libgnat/a-ngelfu.adb
++++ b/gcc/ada/libgnat/a-ngelfu.adb
+@@ -116,7 +116,7 @@ is
+                return Sqrt (Left);
+
+             else
+-               A_Right := abs (Right);
++               A_Right := abs Right;
+
+                --  If exponent is larger than one, compute integer exponen-
+                --  tiation if possible, and evaluate fractional part with more
+diff --git a/gcc/ada/libgnat/a-ngrear.adb b/gcc/ada/libgnat/a-ngrear.adb
+index 6dc78ef8adf6..e7b1bcd0b944 100644
+--- a/gcc/ada/libgnat/a-ngrear.adb
++++ b/gcc/ada/libgnat/a-ngrear.adb
+@@ -88,7 +88,7 @@ package body Ada.Numerics.Generic_Real_Arrays is
+    --  Return True iff A is symmetric, see RM G.3.1 (90).
+
+    function Is_Tiny (Value, Compared_To : Real) return Boolean is
+-     (abs Compared_To + 100.0 * abs (Value) = abs Compared_To);
++     (abs Compared_To + 100.0 * abs Value = abs Compared_To);
+    --  Return True iff the Value is much smaller in magnitude than the least
+    --  significant digit of Compared_To.
+
+diff --git a/gcc/ada/libgnat/a-strbou.ads b/gcc/ada/libgnat/a-strbou.ads
+index 4df499f59b14..c849dbea07ec 100644
+--- a/gcc/ada/libgnat/a-strbou.ads
++++ b/gcc/ada/libgnat/a-strbou.ads
+@@ -784,8 +784,8 @@ is
+                          then J <= Index'Result - 1
+                          else J - 1 in Index'Result
+                                        .. Length (Source) - Pattern'Length)
+-                     then not (Search.Match
+-                       (To_String (Source), Pattern, Mapping, J)))),
++                     then not Search.Match
++                       (To_String (Source), Pattern, Mapping, J))),
+
+            --  Otherwise, 0 is returned
+
+@@ -837,8 +837,8 @@ is
+                          then J <= Index'Result - 1
+                          else J - 1 in Index'Result
+                                        .. Length (Source) - Pattern'Length)
+-                     then not (Search.Match
+-                       (To_String (Source), Pattern, Mapping, J)))),
++                     then not Search.Match
++                       (To_String (Source), Pattern, Mapping, J))),
+
+            --  Otherwise, 0 is returned
+
+@@ -943,8 +943,8 @@ is
+                          then J in From .. Index'Result - 1
+                          else J - 1 in Index'Result
+                                        .. From - Pattern'Length)
+-                     then not (Search.Match
+-                       (To_String (Source), Pattern, Mapping, J)))),
++                     then not Search.Match
++                       (To_String (Source), Pattern, Mapping, J))),
+
+            --  Otherwise, 0 is returned
+
+@@ -1007,8 +1007,8 @@ is
+                          then J in From .. Index'Result - 1
+                          else J - 1 in Index'Result
+                                        .. From - Pattern'Length)
+-                     then not (Search.Match
+-                       (To_String (Source), Pattern, Mapping, J)))),
++                     then not Search.Match
++                       (To_String (Source), Pattern, Mapping, J))),
+
+            --  Otherwise, 0 is returned
+
+diff --git a/gcc/ada/libgnat/a-strfix.ads b/gcc/ada/libgnat/a-strfix.ads
+index aed0851493bc..b959464ad2e1 100644
+--- a/gcc/ada/libgnat/a-strfix.ads
++++ b/gcc/ada/libgnat/a-strfix.ads
+@@ -162,8 +162,8 @@ is
+                       then J in From .. Index'Result - 1
+                       else J - 1 in Index'Result
+                                     .. From - Pattern'Length)
+-                  then not (Ada.Strings.Search.Match
+-                              (Source, Pattern, Mapping, J)))),
++                  then not Ada.Strings.Search.Match
++                             (Source, Pattern, Mapping, J))),
+
+         --  Otherwise, 0 is returned
+
+@@ -225,8 +225,8 @@ is
+                       then J in From .. Index'Result - 1
+                       else J - 1 in Index'Result
+                                     .. From - Pattern'Length)
+-                  then not (Ada.Strings.Search.Match
+-                              (Source, Pattern, Mapping, J)))),
++                  then not Ada.Strings.Search.Match
++                             (Source, Pattern, Mapping, J))),
+
+         --  Otherwise, 0 is returned
+
+@@ -294,8 +294,8 @@ is
+                       then J <= Index'Result - 1
+                       else J - 1 in Index'Result
+                                     .. Source'Last - Pattern'Length)
+-                  then not (Ada.Strings.Search.Match
+-                              (Source, Pattern, Mapping, J)))),
++                  then not Ada.Strings.Search.Match
++                             (Source, Pattern, Mapping, J))),
+
+         --  Otherwise, 0 is returned
+
+@@ -349,8 +349,8 @@ is
+                       then J <= Index'Result - 1
+                       else J - 1 in Index'Result
+                                     .. Source'Last - Pattern'Length)
+-                  then not (Ada.Strings.Search.Match
+-                              (Source, Pattern, Mapping, J)))),
++                  then not Ada.Strings.Search.Match
++                             (Source, Pattern, Mapping, J))),
+
+         --  Otherwise, 0 is returned
+
+diff --git a/gcc/ada/libgnat/a-strsea.adb b/gcc/ada/libgnat/a-strsea.adb
+index 85fdb9ed9e4a..45fb68297c99 100644
+--- a/gcc/ada/libgnat/a-strsea.adb
++++ b/gcc/ada/libgnat/a-strsea.adb
+@@ -71,7 +71,7 @@ package body Ada.Strings.Search with SPARK_Mode is
+    is
+       (if Test = Inside then
+           Is_In (Element, Set)
+-      else not (Is_In (Element, Set)));
++      else not Is_In (Element, Set));
+
+    -----------
+    -- Count --
+@@ -125,7 +125,7 @@ package body Ada.Strings.Search with SPARK_Mode is
+                if Pattern (K) /= Value (Mapping,
+                  Source (Ind + (K - Pattern'First)))
+                then
+-                  pragma Assert (not (Match (Source, Pattern, Mapping, Ind)));
++                  pragma Assert (not Match (Source, Pattern, Mapping, Ind));
+                   goto Cont;
+                end if;
+
+@@ -188,7 +188,7 @@ package body Ada.Strings.Search with SPARK_Mode is
+                pragma Annotate (GNATprove, False_Positive,
+                                 "call via access-to-subprogram",
+                                 "function Mapping must always terminate");
+-               pragma Assert (not (Match (Source, Pattern, Mapping, Ind)));
++               pragma Assert (not Match (Source, Pattern, Mapping, Ind));
+                goto Cont;
+             end if;
+
+@@ -280,7 +280,7 @@ package body Ada.Strings.Search with SPARK_Mode is
+
+          pragma Loop_Invariant
+            (for all K in Integer'Max (From, Source'First) .. J =>
+-                not (Belongs (Source (K), Set, Test)));
++                not Belongs (Source (K), Set, Test));
+       end loop;
+
+       --  Here if no token found
+@@ -323,7 +323,7 @@ package body Ada.Strings.Search with SPARK_Mode is
+
+          pragma Loop_Invariant
+            (for all K in Source'First .. J =>
+-              not (Belongs (Source (K), Set, Test)));
++              not Belongs (Source (K), Set, Test));
+       end loop;
+
+       --  Here if no token found
+@@ -380,7 +380,7 @@ package body Ada.Strings.Search with SPARK_Mode is
+
+                pragma Loop_Invariant
+                  (for all J in Source'First .. Ind =>
+-                    not (Match (Source, Pattern, Mapping, J)));
++                    not Match (Source, Pattern, Mapping, J));
+             end loop;
+
+          --  Mapped forward case
+@@ -406,7 +406,7 @@ package body Ada.Strings.Search with SPARK_Mode is
+                <<Cont1>>
+                pragma Loop_Invariant
+                  (for all J in Source'First .. Ind =>
+-                    not (Match (Source, Pattern, Mapping, J)));
++                    not Match (Source, Pattern, Mapping, J));
+                null;
+             end loop;
+          end if;
+@@ -425,7 +425,7 @@ package body Ada.Strings.Search with SPARK_Mode is
+
+                pragma Loop_Invariant
+                  (for all J in Ind .. Source'Last - PL1 =>
+-                    not (Match (Source, Pattern, Mapping, J)));
++                    not Match (Source, Pattern, Mapping, J));
+             end loop;
+
+          --  Mapped backward case
+@@ -451,7 +451,7 @@ package body Ada.Strings.Search with SPARK_Mode is
+                <<Cont2>>
+                pragma Loop_Invariant
+                  (for all J in Ind .. Source'Last - PL1 =>
+-                    not (Match (Source, Pattern, Mapping, J)));
++                    not Match (Source, Pattern, Mapping, J));
+                null;
+             end loop;
+          end if;
+@@ -515,7 +515,7 @@ package body Ada.Strings.Search with SPARK_Mode is
+             <<Cont1>>
+             pragma Loop_Invariant
+               (for all J in Source'First .. Ind =>
+-                 not (Match (Source, Pattern, Mapping, J)));
++                 not Match (Source, Pattern, Mapping, J));
+             null;
+          end loop;
+
+@@ -546,7 +546,7 @@ package body Ada.Strings.Search with SPARK_Mode is
+             <<Cont2>>
+             pragma Loop_Invariant
+               (for all J in Ind .. Source'Last - PL1 =>
+-                not (Match (Source, Pattern, Mapping, J)));
++                not Match (Source, Pattern, Mapping, J));
+             null;
+          end loop;
+       end if;
+@@ -574,7 +574,7 @@ package body Ada.Strings.Search with SPARK_Mode is
+
+             pragma Loop_Invariant
+               (for all C of Source (Source'First .. J) =>
+-                   not (Belongs (C, Set, Test)));
++                   not Belongs (C, Set, Test));
+          end loop;
+
+       --  Backwards case
+@@ -587,7 +587,7 @@ package body Ada.Strings.Search with SPARK_Mode is
+
+             pragma Loop_Invariant
+               (for all C of Source (J .. Source'Last) =>
+-                   not (Belongs (C, Set, Test)));
++                   not Belongs (C, Set, Test));
+          end loop;
+       end if;
+
+diff --git a/gcc/ada/libgnat/a-strsea.ads b/gcc/ada/libgnat/a-strsea.ads
+index 1e6fd9c7a4b2..92b8069b22fe 100644
+--- a/gcc/ada/libgnat/a-strsea.ads
++++ b/gcc/ada/libgnat/a-strsea.ads
+@@ -148,7 +148,7 @@ is
+                       then J <= Index'Result - 1
+                       else J - 1 in Index'Result
+                                     .. Source'Last - Pattern'Length)
+-                  then not (Match (Source, Pattern, Mapping, J)))),
++                  then not Match (Source, Pattern, Mapping, J))),
+
+         --  Otherwise, 0 is returned
+
+@@ -195,7 +195,7 @@ is
+                       then J <= Index'Result - 1
+                       else J - 1 in Index'Result
+                                     .. Source'Last - Pattern'Length)
+-                  then not (Match (Source, Pattern, Mapping, J)))),
++                  then not Match (Source, Pattern, Mapping, J))),
+
+         --  Otherwise, 0 is returned
+
+@@ -295,7 +295,7 @@ is
+                       then J in From .. Index'Result - 1
+                       else J - 1 in Index'Result
+                                     .. From - Pattern'Length)
+-                  then not (Match (Source, Pattern, Mapping, J)))),
++                  then not Match (Source, Pattern, Mapping, J))),
+
+         --  Otherwise, 0 is returned
+
+@@ -353,7 +353,7 @@ is
+                       then J in From .. Index'Result - 1
+                       else J - 1 in Index'Result
+                                     .. From - Pattern'Length)
+-                  then not (Match (Source, Pattern, Mapping, J)))),
++                  then not Match (Source, Pattern, Mapping, J))),
+
+         --  Otherwise, 0 is returned
+
+diff --git a/gcc/ada/libgnat/a-strsup.ads b/gcc/ada/libgnat/a-strsup.ads
+index a575b2f32c2d..65d13ed2cbe4 100644
+--- a/gcc/ada/libgnat/a-strsup.ads
++++ b/gcc/ada/libgnat/a-strsup.ads
+@@ -852,8 +852,8 @@ is
+                       then J <= Super_Index'Result - 1
+                       else J - 1 in Super_Index'Result
+                                     .. Super_Length (Source) - Pattern'Length)
+-                  then not (Search.Match
+-                    (Super_To_String (Source), Pattern, Mapping, J)))),
++                  then not Search.Match
++                    (Super_To_String (Source), Pattern, Mapping, J))),
+
+         --  Otherwise, 0 is returned
+
+@@ -906,8 +906,8 @@ is
+                       then J <= Super_Index'Result - 1
+                       else J - 1 in Super_Index'Result
+                                     .. Super_Length (Source) - Pattern'Length)
+-                  then not (Search.Match
+-                    (Super_To_String (Source), Pattern, Mapping, J)))),
++                  then not Search.Match
++                    (Super_To_String (Source), Pattern, Mapping, J))),
+
+         --  Otherwise, 0 is returned
+
+@@ -1012,8 +1012,8 @@ is
+                       then J in From .. Super_Index'Result - 1
+                       else J - 1 in Super_Index'Result
+                                     .. From - Pattern'Length)
+-                  then not (Search.Match
+-                    (Super_To_String (Source), Pattern, Mapping, J)))),
++                  then not Search.Match
++                    (Super_To_String (Source), Pattern, Mapping, J))),
+
+         --  Otherwise, 0 is returned
+
+@@ -1075,8 +1075,8 @@ is
+                       then J in From .. Super_Index'Result - 1
+                       else J - 1 in Super_Index'Result
+                                     .. From - Pattern'Length)
+-                  then not (Search.Match
+-                    (Super_To_String (Source), Pattern, Mapping, J)))),
++                  then not Search.Match
++                    (Super_To_String (Source), Pattern, Mapping, J))),
+
+         --  Otherwise, 0 is returned
+
+diff --git a/gcc/ada/libgnat/g-alleve.adb b/gcc/ada/libgnat/g-alleve.adb
+index 896786015dc5..ae6b4920729f 100644
+--- a/gcc/ada/libgnat/g-alleve.adb
++++ b/gcc/ada/libgnat/g-alleve.adb
+@@ -377,7 +377,7 @@ package body GNAT.Altivec.Low_Level_Vectors is
+       begin
+          for K in Varray_Type'Range loop
+             D (K) := (if A (K) /= Component_Type'First
+-                      then abs (A (K)) else Component_Type'First);
++                      then abs A (K) else Component_Type'First);
+          end loop;
+
+          return D;
+@@ -392,7 +392,7 @@ package body GNAT.Altivec.Low_Level_Vectors is
+
+       begin
+          for K in Varray_Type'Range loop
+-            D (K) := Saturate (abs (SI64 (A (K))));
++            D (K) := Saturate (abs SI64 (A (K)));
+          end loop;
+
+          return D;
+@@ -1583,7 +1583,7 @@ package body GNAT.Altivec.Low_Level_Vectors is
+
+    begin
+       if Bits (VSCR, NJ_POS, NJ_POS) = 1
+-        and then abs (X) < 2.0 ** (-126)
++        and then abs X < 2.0 ** (-126)
+       then
+          D := (if X < 0.0 then -0.0 else +0.0);
+       else
+@@ -1959,7 +1959,7 @@ package body GNAT.Altivec.Low_Level_Vectors is
+
+    begin
+       for J in Varray_float'Range loop
+-         D (J) := abs (VA.Values (J));
++         D (J) := abs VA.Values (J);
+       end loop;
+
+       return To_Vector ((Values => D));
+diff --git a/gcc/ada/libgnat/g-spitbo.adb b/gcc/ada/libgnat/g-spitbo.adb
+index 736b0d292826..88df3460e8c5 100644
+--- a/gcc/ada/libgnat/g-spitbo.adb
++++ b/gcc/ada/libgnat/g-spitbo.adb
+@@ -255,7 +255,7 @@ package body GNAT.Spitbol is
+    function S (Num : Integer) return String is
+       Buf : String (1 .. 30);
+       Ptr : Natural := Buf'Last + 1;
+-      Val : Natural := abs (Num);
++      Val : Natural := abs Num;
+
+    begin
+       loop
+@@ -748,7 +748,7 @@ package body GNAT.Spitbol is
+    function V (Num : Integer) return VString is
+       Buf : String (1 .. 30);
+       Ptr : Natural := Buf'Last + 1;
+-      Val : Natural := abs (Num);
++      Val : Natural := abs Num;
+
+    begin
+       loop
+diff --git a/gcc/ada/libgnat/s-aridou.adb b/gcc/ada/libgnat/s-aridou.adb
+index b12307fabe55..e4140e837799 100644
+--- a/gcc/ada/libgnat/s-aridou.adb
++++ b/gcc/ada/libgnat/s-aridou.adb
+@@ -209,7 +209,7 @@ is
+    procedure Lemma_Abs_Commutation (X : Double_Int)
+    with
+      Ghost,
+-     Post => abs (Big (X)) = Big (Double_Uns'(abs X));
++     Post => abs Big (X) = Big (Double_Uns'(abs X));
+
+    procedure Lemma_Abs_Div_Commutation (X, Y : Big_Integer)
+    with
+@@ -226,8 +226,8 @@ is
+    with
+      Ghost,
+      Pre  => In_Double_Int_Range (X),
+-     Post => abs (X) <= Big_2xxDouble_Minus_1
+-       and then In_Double_Int_Range (-abs (X));
++     Post => abs X <= Big_2xxDouble_Minus_1
++       and then In_Double_Int_Range (-abs X);
+
+    procedure Lemma_Abs_Rem_Commutation (X, Y : Big_Integer)
+    with
+@@ -1760,7 +1760,7 @@ is
+                                              + Big (Double_Uns (Lo (T1))));
+          pragma Assert (Mult <= Big_2xxDouble_Minus_1);
+          Lemma_Mult_Commutation (X, Y);
+-         pragma Assert (Mult = abs (Big (X * Y)));
++         pragma Assert (Mult = abs Big (X * Y));
+          Lemma_Word_Commutation (Lo (T2));
+          pragma Assert (Mult = Big (Double_Uns'(2 ** Single_Size)
+                           * Double_Uns (Lo (T2)))
+diff --git a/gcc/ada/libgnat/s-arit32.adb b/gcc/ada/libgnat/s-arit32.adb
+index 3ab2955626fa..91082e7692ab 100644
+--- a/gcc/ada/libgnat/s-arit32.adb
++++ b/gcc/ada/libgnat/s-arit32.adb
+@@ -132,7 +132,7 @@ is
+    procedure Lemma_Abs_Commutation (X : Int32)
+    with
+      Ghost,
+-     Post => abs (Big (X)) = Big (Uns32'(abs X));
++     Post => abs Big (X) = Big (Uns32'(abs X));
+
+    procedure Lemma_Abs_Div_Commutation (X, Y : Big_Integer)
+    with
+diff --git a/gcc/ada/libgnat/s-dourea.ads b/gcc/ada/libgnat/s-dourea.ads
+index 7e6759c0917e..48b163ec1e42 100644
+--- a/gcc/ada/libgnat/s-dourea.ads
++++ b/gcc/ada/libgnat/s-dourea.ads
+@@ -53,7 +53,7 @@ package System.Double_Real is
+    --  Convert a double to a single real
+
+    function Quick_Two_Sum (A, B : Num) return Double_T
+-     with Pre => A = 0.0 or else abs (A) >= abs (B);
++     with Pre => A = 0.0 or else abs A >= abs B;
+    --  Compute A + B and its rounding error exactly, but assume |A| >= |B|
+
+    function Two_Sum (A, B : Num) return Double_T;
+diff --git a/gcc/ada/libgnat/s-genbig.adb b/gcc/ada/libgnat/s-genbig.adb
+index 73164dabff1c..82bf3f76fc2e 100644
+--- a/gcc/ada/libgnat/s-genbig.adb
++++ b/gcc/ada/libgnat/s-genbig.adb
+@@ -754,8 +754,8 @@ package body System.Generic_Bignums is
+             (Y.Len <= 1 or else (Y.Len = 2 and then Y.D (1) < 2**31))
+       then
+          declare
+-            A : constant LLI := abs (From_Bignum (X));
+-            B : constant LLI := abs (From_Bignum (Y));
++            A : constant LLI := abs From_Bignum (X);
++            B : constant LLI := abs From_Bignum (Y);
+          begin
+             if not Discard_Quotient then
+                Quotient := To_Bignum (A / B);
+diff --git a/gcc/ada/libgnat/s-imager.adb b/gcc/ada/libgnat/s-imager.adb
+index 3d20669b6e76..d8aaf63dcb47 100644
+--- a/gcc/ada/libgnat/s-imager.adb
++++ b/gcc/ada/libgnat/s-imager.adb
+@@ -394,7 +394,7 @@ package body System.Image_R is
+       Digs (1) := (if Is_Negative (V) then '-' else ' ');
+       Ndigs := 1;
+
+-      X := Double_Real.To_Double (abs (V));
++      X := Double_Real.To_Double (abs V);
+
+       --  If X is zero, we are done
+
+diff --git a/gcc/ada/libgnat/s-statxd.adb b/gcc/ada/libgnat/s-statxd.adb
+index d2d035ed941c..744f3888f6e6 100644
+--- a/gcc/ada/libgnat/s-statxd.adb
++++ b/gcc/ada/libgnat/s-statxd.adb
+@@ -1254,7 +1254,7 @@ package body System.Stream_Attributes.XDR is
+       --  Compute Sign
+
+       Is_Positive := (0.0 <= Item);
+-      F := abs (Item);
++      F := abs Item;
+
+       --  Signed zero
+
+@@ -1400,7 +1400,7 @@ package body System.Stream_Attributes.XDR is
+       --  Compute Sign
+
+       Is_Positive := (0.0 <= Item);
+-      F := abs (Item);
++      F := abs Item;
+
+       --  Signed zero
+
+@@ -1747,7 +1747,7 @@ package body System.Stream_Attributes.XDR is
+       --  Compute Sign
+
+       Is_Positive := (0.0 <= Item);
+-      F := abs (Item);
++      F := abs Item;
+
+       --  Signed zero
+
+diff --git a/gcc/ada/libgnat/s-widthi.adb b/gcc/ada/libgnat/s-widthi.adb
+index c8219b1e4b2f..959579047d1a 100644
+--- a/gcc/ada/libgnat/s-widthi.adb
++++ b/gcc/ada/libgnat/s-widthi.adb
+@@ -126,8 +126,8 @@ function System.Width_I (Lo, Hi : Int) return Natural is
+
+    Pow    : Big_Integer := 1 with Ghost;
+    T_Init : constant Int :=
+-     Int'Max (abs (Int'Max (Lo, Int'First + 1)),
+-              abs (Int'Max (Hi, Int'First + 1)))
++     Int'Max (abs Int'Max (Lo, Int'First + 1),
++              abs Int'Max (Hi, Int'First + 1))
+      with Ghost;
+
+ --  Start of processing for System.Width_I
+@@ -145,8 +145,8 @@ begin
+       --  negative number (note that First + 1 has same digits as First)
+
+       T := Int'Max (
+-             abs (Int'Max (Lo, Int'First + 1)),
+-             abs (Int'Max (Hi, Int'First + 1)));
++             abs Int'Max (Lo, Int'First + 1),
++             abs Int'Max (Hi, Int'First + 1));
+
+       --  Increase value if more digits required
+
+diff --git a/gcc/ada/sem_attr.adb b/gcc/ada/sem_attr.adb
+index 720a6dab4ec2..af08fdb2e33f 100644
+--- a/gcc/ada/sem_attr.adb
++++ b/gcc/ada/sem_attr.adb
+@@ -2266,7 +2266,7 @@ package body Sem_Attr is
+          --  Now test for dynamic predicate
+
+          if Has_Predicates (P_Type)
+-           and then not (Has_Static_Predicate (P_Type))
++           and then not Has_Static_Predicate (P_Type)
+          then
+             Error_Attr_P
+               ("prefix of % attribute may not have dynamic predicate");
+@@ -4019,7 +4019,7 @@ package body Sem_Attr is
+                   if (Is_Type (Tsk) and then Tsk = S)
+                     or else (not Is_Type (Tsk)
+                               and then Etype (Tsk) = S
+-                              and then not (Comes_From_Source (S)))
++                              and then not Comes_From_Source (S))
+                   then
+                      null;
+                   else
+diff --git a/gcc/ada/sem_ch10.adb b/gcc/ada/sem_ch10.adb
+index 97e2c37422df..de5a8c846ba7 100644
+--- a/gcc/ada/sem_ch10.adb
++++ b/gcc/ada/sem_ch10.adb
+@@ -4176,7 +4176,7 @@ package body Sem_Ch10 is
+                   P      := Unit (Parent_Spec (Lib_Spec));
+                   P_Name := Defining_Entity (P);
+
+-                  if not (Private_Present (Parent (Lib_Spec)))
++                  if not Private_Present (Parent (Lib_Spec))
+                     and then not In_Private_Part (P_Name)
+                   then
+                      Install_Private_Declarations (P_Name);
+diff --git a/gcc/ada/sem_ch3.adb b/gcc/ada/sem_ch3.adb
+index 64e3f85c605f..74eac9c9789c 100644
+--- a/gcc/ada/sem_ch3.adb
++++ b/gcc/ada/sem_ch3.adb
+@@ -18561,7 +18561,7 @@ package body Sem_Ch3 is
+                Error_Msg_N
+                  ("full view of private extension must be an extension", N);
+
+-            elsif not (Abstract_Present (Parent (Prev)))
++            elsif not Abstract_Present (Parent (Prev))
+               and then Abstract_Present (Type_Definition (N))
+             then
+                Error_Msg_N
+diff --git a/gcc/ada/sem_ch7.adb b/gcc/ada/sem_ch7.adb
+index 0df6322da2a2..c2e60aaae113 100644
+--- a/gcc/ada/sem_ch7.adb
++++ b/gcc/ada/sem_ch7.adb
+@@ -2665,7 +2665,7 @@ package body Sem_Ch7 is
+       then
+          return True;
+
+-      elsif not (Is_Derived_Type (Dep))
++      elsif not Is_Derived_Type (Dep)
+         and then Is_Derived_Type (Full_View (Dep))
+       then
+          --  When instantiating a package body, the scope stack is empty, so
+diff --git a/gcc/ada/sem_dim.adb b/gcc/ada/sem_dim.adb
+index 0b09f3fded6c..139ed661f901 100644
+--- a/gcc/ada/sem_dim.adb
++++ b/gcc/ada/sem_dim.adb
+@@ -1580,13 +1580,13 @@ package body Sem_Dim is
+                  and then Dims_Of_L /= Dims_Of_R
+                then
+                   if Nkind (L) = N_Real_Literal
+-                    and then not (Comes_From_Source (L))
++                    and then not Comes_From_Source (L)
+                     and then Expander_Active
+                   then
+                      null;
+
+                   elsif Nkind (R) = N_Real_Literal
+-                    and then not (Comes_From_Source (R))
++                    and then not Comes_From_Source (R)
+                     and then Expander_Active
+                   then
+                      null;
+diff --git a/gcc/ada/sem_res.adb b/gcc/ada/sem_res.adb
+index 8c9c4de6f764..b73b947c9a25 100644
+--- a/gcc/ada/sem_res.adb
++++ b/gcc/ada/sem_res.adb
+@@ -12389,7 +12389,7 @@ package body Sem_Res is
+
+             if Nkind (Rop) = N_Real_Literal
+               and then Realval (Rop) /= Ureal_0
+-              and then abs (Realval (Rop)) < Delta_Value (Standard_Duration)
++              and then abs Realval (Rop) < Delta_Value (Standard_Duration)
+             then
+                Error_Msg_N
+                  ("??universal real operand can only "
+diff --git a/gcc/ada/uintp.adb b/gcc/ada/uintp.adb
+index c71960ba004a..edbd95cf6078 100644
+--- a/gcc/ada/uintp.adb
++++ b/gcc/ada/uintp.adb
+@@ -565,7 +565,7 @@ package body Uintp is
+          begin
+             --  It is not so clear what to return when Arg is negative???
+
+-            Left_Hat := abs (L1) * Base + L2;
++            Left_Hat := abs L1 * Base + L2;
+          end;
+       end if;
+
+@@ -584,7 +584,7 @@ package body Uintp is
+             Length_R := 2;
+
+          else
+-            R1 := abs (Udigits.Table (Uints.Table (Right).Loc));
++            R1 := abs Udigits.Table (Uints.Table (Right).Loc);
+             R2 := Udigits.Table (Uints.Table (Right).Loc + 1);
+             Length_R := Uints.Table (Right).Length;
+          end if;
+@@ -635,7 +635,7 @@ package body Uintp is
+       --  For any other number in Int_Range, get absolute value of number
+
+       elsif UI_Is_In_Int_Range (Input) then
+-         Num := abs (UI_To_Int (Input));
++         Num := abs UI_To_Int (Input);
+          Bits := 0;
+
+       --  If not in Int_Range then initialize bit count for all low order
+@@ -643,7 +643,7 @@ package body Uintp is
+
+       else
+          Bits := Base_Bits * (Uints.Table (Input).Length - 1);
+-         Num  := abs (Udigits.Table (Uints.Table (Input).Loc));
++         Num  := abs Udigits.Table (Uints.Table (Input).Loc);
+       end if;
+
+       --  Increase bit count for remaining value in Num
+@@ -2041,8 +2041,8 @@ package body Uintp is
+          Init_Operand (Left, L_Vec);
+          Init_Operand (Right, R_Vec);
+          Neg := L_Vec (1) < Int_0 xor R_Vec (1) < Int_0;
+-         L_Vec (1) := abs (L_Vec (1));
+-         R_Vec (1) := abs (R_Vec (1));
++         L_Vec (1) := abs L_Vec (1);
++         R_Vec (1) := abs R_Vec (1);
+
+          Algorithm_M : declare
+             Product : UI_Vector (1 .. L_Length + R_Length);
+--- a/gcc/ada/sem_ch6.adb	2024-08-01 04:17:14.000000000 -0400
++++ b/gcc/ada/sem_ch6.adb	2025-06-11 07:04:15.054106717 -0400
+@@ -9958,7 +9958,7 @@
+                --  from interfaces several null primitives which differ only
+                --  in the mode of the formals.
+
+-               if not (Comes_From_Source (E))
++               if not Comes_From_Source (E)
+                  and then Is_Null_Procedure (E)
+                  and then not Mode_Conformant (Designator, E)
+                then
+@@ -12558,7 +12558,7 @@
+                   --  overridden operation is the inherited primitive
+                   --  (which is available through the attribute alias).
+
+-                  if not (Comes_From_Source (E))
++                  if not Comes_From_Source (E)
+                     and then Is_Dispatching_Operation (E)
+                     and then Find_Dispatching_Type (E) =
+                              Find_Dispatching_Type (S)
+--- a/gcc/ada/exp_ch11.adb	2024-08-01 04:17:13.000000000 -0400
++++ b/gcc/ada/exp_ch11.adb	2025-06-11 07:15:38.643085122 -0400
+@@ -552,7 +552,7 @@
+
+          --  Nothing to do if no handlers requiring the goto transformation
+
+-         if not (Local_Expansion_Required) then
++         if not Local_Expansion_Required then
+             return;
+          end if;
