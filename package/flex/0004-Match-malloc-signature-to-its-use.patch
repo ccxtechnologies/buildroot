@@ -1,21 +1,27 @@
---- flex-2.6.4/lib/malloc.c.orig	2025-05-06 15:20:58.199783950 -0400
-+++ flex-2.6.4/lib/malloc.c	2025-05-06 15:21:10.615082525 -0400
-@@ -1,13 +1,13 @@
-      #include <config.h>
-      #undef malloc
--     
-+
+From 4b142954b54a57a9b0af0a9661056a9c39a8fa95 Mon Sep 17 00:00:00 2001
+From: Richard Barnes <rbarnes@umn.edu>
+Date: Wed, 2 Oct 2024 10:35:09 -0700
+Subject: [PATCH] Match `malloc` signature to its use
+
+Upstream: https://github.com/westes/flex/pull/674
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ lib/malloc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/malloc.c b/lib/malloc.c
+index 75e8ef9..701b9b3 100755
+--- a/lib/malloc.c
++++ b/lib/malloc.c
+@@ -3,7 +3,7 @@
+      
       #include <sys/types.h>
--     
+      
 -     void *malloc ();
--     
-+
 +     void *malloc (size_t n);
-+
+      
       /* Allocate an N-byte block of memory from the heap.
          If N is zero, allocate a 1-byte block.  */
--     
-+
-      void *
-      rpl_malloc (size_t n)
-      {
+-- 
+2.39.5
+
