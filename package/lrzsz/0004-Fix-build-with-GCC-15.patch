@@ -75,19 +75,6 @@ index 14459cd..3fb8fa6 100644
 -							  void (*_version) (void), 
 +							  void (*_version) (), 
  							  void (*_usage) (int)));
-diff --git a/lib/xstrtol.c b/lib/xstrtol.c
-index d7b4b56..7d0737d 100644
---- a/lib/xstrtol.c
-+++ b/lib/xstrtol.c
-@@ -65,8 +65,6 @@ extern int errno;
- 	}								\
-       while (0)
- 
--__unsigned long int __strtol ();
--
- /* FIXME: comment.  */
- 
- strtol_error
 -- 
 2.50.1
 
