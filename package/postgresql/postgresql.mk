@@ -34,6 +34,11 @@ POSTGRESQL_DEPENDENCIES = \
 # It is false positive for postgresql
 POSTGRESQL_IGNORE_CVES += CVE-2017-8806
 
+# https://www.postgresql.org/docs/11/static/install-procedure.html:
+# "If you want to invoke the build from another makefile rather than
+# manually, you must unset MAKELEVEL or set it to zero"
+POSTGRESQL_MAKE_OPTS = MAKELEVEL=0
+
 ifeq ($(BR2_PACKAGE_POSTGRESQL_FULL),y)
 POSTGRESQL_NINJA_OPTS += world
 POSTGRESQL_INSTALL_TARGET_OPTS += DESTDIR=$(TARGET_DIR) install-world
