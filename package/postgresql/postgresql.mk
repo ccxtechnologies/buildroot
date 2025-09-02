@@ -20,11 +20,11 @@ POSTGRESQL_LDFLAGS = $(TARGET_LDFLAGS) $(TARGET_NLS_LIBS)
 # -Ddocs_pdf=disabled, and it causes build failures
 POSTGRESQL_CONF_OPTS = \
 	--with-extra-version=ccx \
-	-Drpath=false \
-	-Ddocs=disabled \
-	-Ddocs_pdf=disabled \
-	-DXMLLINT=/nowhere \
-	-DXSLTPROC=/nowhere
+	--disable-rpath \
+	--disable-docs \
+	--disable-docs-pdf \
+	--with-xmllint=/nowhere \
+	--with-xsltproc=/nowhere
 POSTGRESQL_DEPENDENCIES = \
 	$(TARGET_NLS_DEPENDENCIES) \
 	host-bison \
@@ -55,28 +55,28 @@ endif
 endif
 
 ifeq ($(BR2_arcle)$(BR2_arceb)$(BR2_microblazeel)$(BR2_microblazebe)$(BR2_or1k)$(BR2_riscv)$(BR2_xtensa),y)
-POSTGRESQL_CONF_OPTS += -Dspinlocks=false
+POSTGRESQL_CONF_OPTS += --disable-spinlocks
 else
-POSTGRESQL_CONF_OPTS += -Dspinlocks=true
+POSTGRESQL_CONF_OPTS += --enable-spinlocks
 endif
 
 ifeq ($(BR2_PACKAGE_READLINE),y)
 POSTGRESQL_DEPENDENCIES += readline
-POSTGRESQL_CONF_OPTS += -Dreadline=enabled
+POSTGRESQL_CONF_OPTS += --with-readline
 else
-POSTGRESQL_CONF_OPTS += -Dreadline=disabled
+POSTGRESQL_CONF_OPTS += --without-readline
 endif
 
 ifeq ($(BR2_PACKAGE_ZLIB),y)
 POSTGRESQL_DEPENDENCIES += zlib
-POSTGRESQL_CONF_OPTS += -Dzlib=enabled
+POSTGRESQL_CONF_OPTS += --with-zlib
 else
-POSTGRESQL_CONF_OPTS += -Dzlib=disabled
+POSTGRESQL_CONF_OPTS += --without-zlib
 endif
 
 ifeq ($(BR2_PACKAGE_TZDATA),y)
 POSTGRESQL_DEPENDENCIES += tzdata
-POSTGRESQL_CONF_OPTS += -Dsystem_tzdata=/usr/share/zoneinfo
+POSTGRESQL_CONF_OPTS += --with-system-tzdata=/usr/share/zoneinfo
 else
 POSTGRESQL_DEPENDENCIES += host-zic
 POSTGRESQL_CONF_ENV += ZIC="$(ZIC)"
@@ -84,53 +84,53 @@ endif
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 POSTGRESQL_DEPENDENCIES += openssl
-POSTGRESQL_CONF_OPTS += -Dssl=openssl
+POSTGRESQL_CONF_OPTS += --with-openssl
 else
-POSTGRESQL_CONF_OPTS += -Dssl=none
+POSTGRESQL_CONF_OPTS += --with-openssl=none
 endif
 
 ifeq ($(BR2_PACKAGE_OPENLDAP),y)
 POSTGRESQL_DEPENDENCIES += openldap
-POSTGRESQL_CONF_OPTS += -Dldap=enabled
+POSTGRESQL_CONF_OPTS += --with-ldap
 else
-POSTGRESQL_CONF_OPTS += -Dldap=disabled
+POSTGRESQL_CONF_OPTS += --without-ldap
 endif
 
 ifeq ($(BR2_PACKAGE_ICU),y)
 POSTGRESQL_DEPENDENCIES += icu
-POSTGRESQL_CONF_OPTS += -Dicu=enabled
+POSTGRESQL_CONF_OPTS += --with-icu
 else
-POSTGRESQL_CONF_OPTS += -Dicu=disabled
+POSTGRESQL_CONF_OPTS += --without-icu
 endif
 
 ifeq ($(BR2_PACKAGE_LIBXML2),y)
 POSTGRESQL_DEPENDENCIES += libxml2
-POSTGRESQL_CONF_OPTS += -Dlibxml=enabled
+POSTGRESQL_CONF_OPTS += --with-libxml
 POSTGRESQL_CONF_ENV += XML2_CONFIG=$(STAGING_DIR)/usr/bin/xml2-config
 else
-POSTGRESQL_CONF_OPTS += -Dlibxml=disabled
+POSTGRESQL_CONF_OPTS += --without-libxml
 endif
 
 ifeq ($(BR2_PACKAGE_ZSTD),y)
 POSTGRESQL_DEPENDENCIES += host-pkgconf zstd
-POSTGRESQL_CONF_OPTS += -Dzstd=enabled
+POSTGRESQL_CONF_OPTS += --with-zstd
 else
-POSTGRESQL_CONF_OPTS += -Dzstd=disabled
+POSTGRESQL_CONF_OPTS += --without-zstd
 endif
 
 ifeq ($(BR2_PACKAGE_LZ4),y)
 POSTGRESQL_DEPENDENCIES += host-pkgconf lz4
-POSTGRESQL_CONF_OPTS += -Dlz4=enabled
+POSTGRESQL_CONF_OPTS += --with-lz4
 else
-POSTGRESQL_CONF_OPTS += -Dlz4=disabled
+POSTGRESQL_CONF_OPTS += --without-lz4
 endif
 
 # required for postgresql.service Type=notify
 ifeq ($(BR2_PACKAGE_SYSTEMD),y)
 POSTGRESQL_DEPENDENCIES += systemd
-POSTGRESQL_CONF_OPTS += -Dsystemd=enabled
+POSTGRESQL_CONF_OPTS += --with-systemd
 else
-POSTGRESQL_CONF_OPTS += -Dsystemd=disabled
+POSTGRESQL_CONF_OPTS += --without-systemd
 endif
 
 POSTGRESQL_CFLAGS = $(TARGET_CFLAGS)
@@ -173,4 +173,4 @@ define POSTGRESQL_INSTALL_INIT_SYSTEMD
 		$(TARGET_DIR)/usr/lib/systemd/system/postgresql.service
 endef
 
-$(eval $(meson-package))
+$(eval $(autotools-package))
