@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PYTHON3_VERSION_MAJOR = 3.12
+PYTHON3_VERSION_MAJOR = 3.13
 PYTHON3_VERSION = $(PYTHON3_VERSION_MAJOR).7
 PYTHON3_SOURCE = Python-$(PYTHON3_VERSION).tar.xz
 PYTHON3_SITE = https://python.org/ftp/python/$(PYTHON3_VERSION)
@@ -175,6 +175,7 @@ endif
 
 PYTHON3_CONF_ENV += \
 	ac_cv_have_long_long_format=yes \
+	ac_cv_buggy_getaddrinfo=no \
 	ac_cv_file__dev_ptmx=yes \
 	ac_cv_file__dev_ptc=yes \
 	ac_cv_working_tzset=yes \
@@ -186,6 +187,15 @@ PYTHON3_CONF_ENV += ac_cv_little_endian_double=yes
 else
 PYTHON3_CONF_ENV += ac_cv_big_endian_double=yes
 endif
+
+PYTHON3_CFLAGS = $(TARGET_CFLAGS)
+
+ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_121567),y)
+PYTHON3_CFLAGS += -O1
+endif
+
+PYTHON3_CONF_ENV += \
+	CFLAGS="$(PYTHON3_CFLAGS)"
 
 ifeq ($(BR2_PACKAGE_GETTEXT_PROVIDES_LIBINTL),y)
 PYTHON3_DEPENDENCIES += gettext

@@ -14,12 +14,21 @@ POSTGRESQL_CPE_ID_VERSION = 11.22
 POSTGRESQL_SELINUX_MODULES = postgresql
 POSTGRESQL_INSTALL_STAGING = YES
 POSTGRESQL_CONFIG_SCRIPTS = pg_config
-POSTGRESQL_CONF_ENV = \
-	ac_cv_type_struct_sockaddr_in6=yes \
-	pgac_cv_prog_cc_LDFLAGS_EX_BE__Wl___export_dynamic=yes \
-	LIBS=$(TARGET_NLS_LIBS)
-POSTGRESQL_CONF_OPTS = --disable-rpath --with-extra-version=ccx
-POSTGRESQL_DEPENDENCIES = $(TARGET_NLS_DEPENDENCIES)
+POSTGRESQL_LDFLAGS = $(TARGET_LDFLAGS) $(TARGET_NLS_LIBS)
+# We have to force invalid paths for xmllint and xsltproc, otherwise
+# if detected they get used, even with -Ddocs=disabled and
+# -Ddocs_pdf=disabled, and it causes build failures
+POSTGRESQL_CONF_OPTS = \
+	--with-extra-version=ccx \
+	--disable-rpath \
+	--disable-docs \
+	--disable-docs-pdf \
+	--with-xmllint=/nowhere \
+	--with-xsltproc=/nowhere
+POSTGRESQL_DEPENDENCIES = \
+	$(TARGET_NLS_DEPENDENCIES) \
+	host-bison \
+	host-flex
 
 # CVE-2017-8806 is related to postgresql-common package
 # It is false positive for postgresql
@@ -31,7 +40,7 @@ POSTGRESQL_IGNORE_CVES += CVE-2017-8806
 POSTGRESQL_MAKE_OPTS = MAKELEVEL=0
 
 ifeq ($(BR2_PACKAGE_POSTGRESQL_FULL),y)
-POSTGRESQL_MAKE_OPTS += world
+POSTGRESQL_NINJA_OPTS += world
 POSTGRESQL_INSTALL_TARGET_OPTS += DESTDIR=$(TARGET_DIR) install-world
 POSTGRESQL_INSTALL_STAGING_OPTS += DESTDIR=$(STAGING_DIR) install-world
 else
@@ -50,30 +59,22 @@ POSTGRESQL_POST_INSTALL_TARGET_HOOKS += POSTGRESQL_INSTALL_STATS
 endif
 endif
 
-ifeq ($(BR2_TOOLCHAIN_USES_UCLIBC),y)
-# PostgreSQL does not build against uClibc with locales
-# enabled, due to an uClibc bug, see
-# http://lists.uclibc.org/pipermail/uclibc/2014-April/048326.html
-# so overwrite automatic detection and disable locale support
-POSTGRESQL_CONF_ENV += pgac_cv_type_locale_t=no
-endif
-
-ifneq ($(BR2_TOOLCHAIN_HAS_THREADS_NPTL),y)
-POSTGRESQL_CONF_OPTS += --disable-thread-safety
-endif
-
-ifeq ($(BR2_arcle)$(BR2_arceb)$(BR2_microblazeel)$(BR2_microblazebe)$(BR2_or1k)$(BR2_nios2)$(BR2_riscv)$(BR2_xtensa),y)
+ifeq ($(BR2_arcle)$(BR2_arceb)$(BR2_microblazeel)$(BR2_microblazebe)$(BR2_or1k)$(BR2_riscv)$(BR2_xtensa),y)
 POSTGRESQL_CONF_OPTS += --disable-spinlocks
+else
+POSTGRESQL_CONF_OPTS += --enable-spinlocks
 endif
 
 ifeq ($(BR2_PACKAGE_READLINE),y)
 POSTGRESQL_DEPENDENCIES += readline
+POSTGRESQL_CONF_OPTS += --with-readline
 else
 POSTGRESQL_CONF_OPTS += --without-readline
 endif
 
 ifeq ($(BR2_PACKAGE_ZLIB),y)
 POSTGRESQL_DEPENDENCIES += zlib
+POSTGRESQL_CONF_OPTS += --with-zlib
 else
 POSTGRESQL_CONF_OPTS += --without-zlib
 endif
@@ -90,10 +91,7 @@ ifeq ($(BR2_PACKAGE_OPENSSL),y)
 POSTGRESQL_DEPENDENCIES += openssl
 POSTGRESQL_CONF_OPTS += --with-openssl
 else
-# PostgreSQL checks for /dev/urandom and fails if it's being cross-compiled and
-# an SSL library isn't found. Since /dev/urandom is guaranteed to be provided
-# on Linux systems, explicitly tell the configure script it's available.
-POSTGRESQL_CONF_ENV += ac_cv_file__dev_urandom=yes
+POSTGRESQL_CONF_OPTS += --with-openssl=none
 endif
 
 ifeq ($(BR2_PACKAGE_OPENLDAP),y)
