@@ -30,3 +30,12 @@ comment "sysprof needs a toolchain w/ dynamic library, wchar, threads, C++, gcc 
 
 comment "sysprof can't be built with Optimize for fast"
 	depends on BR2_OPTIMIZE_FAST
+
+if BR2_PACKAGE_SYSPROF
+
+config BR2_PACKAGE_SYSPROF_SYSPROFD
+	bool "sysprofd"
+	help
+	  Compile sysprofd, which is needed to get elevated privileges.
+
+endif

@@ -22,6 +22,12 @@ SYSPROF_CONF_OPTS = \
 	-Dtools=true \
 	-Dsystemdunitdir=/usr/lib/systemd/system
 
+ifeq ($(BR2_PACKAGE_SYSPROF_SYSPROFD),y)
+SYSPROF_CONF_OPTS += -Dsysprofd=bundled
+else
+SYSPROF_CONF_OPTS += -Dsysprofd=none
+endif
+
 ifeq ($(BR2_PACKAGE_ELFUTILS),y)
 SYSPROF_DEPENDENCIES += elfutils
 SYSPROF_CONF_OPTS += -Ddebuginfod=enabled
