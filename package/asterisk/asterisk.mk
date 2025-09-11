@@ -322,22 +322,6 @@ ASTERISK_MAKE_ENV += PJPROJECT_CONFIGURE_OPTS=" \
 		--with-xmlto=no \
 		--with-fop=no"
 
-# We want to install sample configuration files, too.
-ASTERISK_INSTALL_TARGET_OPTS = \
-	$(ASTERISK_DIRS) \
-	DESTDIR=$(TARGET_DIR) \
-	LDCONFIG=true \
-	install samples
-
-define ASTERISK_USERS
-	asterisk -1 asterisk -1 * /usr/lib/asterisk - - asterisk user
-endef
-
-define ASTERISK_INSTALL_INIT_SYSTEMD
-	$(INSTALL) -D -m 644 package/asterisk/asterisk.service \
-		$(TARGET_DIR)/usr/lib/systemd/system/asterisk.service
-endef
-
 $(eval $(autotools-package))
 
 #-------------------------------------------------------------------------------
