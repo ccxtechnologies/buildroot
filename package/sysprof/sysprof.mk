@@ -25,15 +25,9 @@ SYSPROF_CONF_OPTS = \
 
 ifeq ($(BR2_PACKAGE_SYSPROF_SYSPROFD),y)
 SYSPROF_CONF_OPTS += -Dsysprofd=bundled
+SYSPROF_DEPENDENCIES += elfutils
 else
 SYSPROF_CONF_OPTS += -Dsysprofd=none
-endif
-
-ifeq ($(BR2_PACKAGE_ELFUTILS),y)
-SYSPROF_DEPENDENCIES += elfutils
-SYSPROF_CONF_OPTS += -Ddebuginfod=enabled
-else
-SYSPROF_CONF_OPTS += -Ddebuginfod=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_SYSTEMD),y)

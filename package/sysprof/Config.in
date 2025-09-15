@@ -35,6 +35,7 @@ if BR2_PACKAGE_SYSPROF
 
 config BR2_PACKAGE_SYSPROF_SYSPROFD
 	bool "sysprofd"
+	select BR2_PACKAGE_ELFUTILS
 	help
 	  Compile sysprofd, which is needed to get elevated privileges.
 
