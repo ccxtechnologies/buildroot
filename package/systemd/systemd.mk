@@ -51,9 +51,9 @@ SYSTEMD_SELINUX_MODULES = systemd udev xdg
 SYSTEMD_PROVIDES = udev
 
 SYSTEMD_CONF_OPTS += \
-	-Ddefault-hierarchy=hybrid \
 	-Didn=true \
 	-Dima=false \
+	-Dipe=false \
 	-Dkexec-path=/usr/sbin/kexec \
 	-Dkmod-path=/usr/bin/kmod \
 	-Dldconfig=false \
@@ -80,6 +80,7 @@ SYSTEMD_CONF_OPTS += \
 	-Dfuzz-tests=false \
 	-Dinstall-tests=false \
 	-Dlog-message-verification=disabled \
+	-Dsysupdated=disabled \
 	-Dtmpfiles=true \
 	-Dukify=disabled \
 	-Dbpf-framework=disabled \
@@ -992,7 +993,8 @@ HOST_SYSTEMD_CONF_OPTS = \
 	-Dopenssl=disabled \
 	-Dp11kit=disabled \
 	-Dlibfido2=disabled \
-	-Dpcre2=disabled
+	-Dpcre2=disabled \
+	-Dsysupdated=disabled
 
 HOST_SYSTEMD_DEPENDENCIES = \
 	$(BR2_COREUTILS_HOST_DEPENDENCY) \
