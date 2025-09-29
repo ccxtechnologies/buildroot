@@ -14,6 +14,8 @@ BUSYBOX_CPE_ID_VENDOR = busybox
 # 0003-libbb-sockaddr2str-ensure-only-printable-characters-.patch
 # 0004-nslookup-sanitize-all-printed-strings-with-printable.patch
 BUSYBOX_IGNORE_CVES += CVE-2022-28391
+# 0012-fix-16018-masking-of-potentially-malicious-tar-cpio-content.patch
+BUSYBOX_IGNORE_CVES += CVE-2025-46394
 
 BUSYBOX_CFLAGS = \
 	$(TARGET_CFLAGS)
