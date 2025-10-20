@@ -1,0 +1,75 @@
+--- strongswan-5.9.14/src/libstrongswan/processing/scheduler.c.orig	2025-10-20 10:51:14.460899754 -0400
++++ strongswan-5.9.14/src/libstrongswan/processing/scheduler.c	2025-10-20 10:52:09.228474338 -0400
+@@ -329,7 +329,7 @@
+ 	this->heap = (event_t**)calloc(this->heap_size + 1, sizeof(event_t*));
+ 
+ 	job = callback_job_create_with_prio((callback_job_cb_t)schedule, this,
+-										NULL, return_false, JOB_PRIO_CRITICAL);
++										NULL, (void*)return_false, JOB_PRIO_CRITICAL);
+ 	lib->processor->queue_job(lib->processor, (job_t*)job);
+ 
+ 	return &this->public;
+
+--- strongswan-5.9.14/src/libstrongswan/utils/identification.c.orig	2025-10-20 10:55:18.133478003 -0400
++++ strongswan-5.9.14/src/libstrongswan/utils/identification.c	2025-10-20 10:56:39.873330928 -0400
+@@ -1625,7 +1625,7 @@
+ 			this->public.hash = _hash_binary;
+ 			this->public.equals = _equals_binary;
+ 			this->public.matches = _matches_any;
+-			this->public.contains_wildcards = return_true;
++			this->public.contains_wildcards = (void*)return_true;
+ 			break;
+ 		case ID_FQDN:
+ 		case ID_RFC822_ADDR:
+@@ -1660,13 +1660,13 @@
+ 			this->public.hash = _hash_binary;
+ 			this->public.equals = _equals_binary;
+ 			this->public.matches = _matches_range;
+-			this->public.contains_wildcards = return_false;
++			this->public.contains_wildcards = (void*)return_false;
+ 			break;
+ 		default:
+ 			this->public.hash = _hash_binary;
+ 			this->public.equals = _equals_binary;
+ 			this->public.matches = _matches_binary;
+-			this->public.contains_wildcards = return_false;
++			this->public.contains_wildcards = (void*)return_false;
+ 			break;
+ 	}
+ 	return this;
+
+--- strongswan-5.9.14/src/libcharon/encoding/payloads/encrypted_payload.c.orig	2025-10-20 11:02:12.777764168 -0400
++++ strongswan-5.9.14/src/libcharon/encoding/payloads/encrypted_payload.c	2025-10-20 11:02:55.615442256 -0400
+@@ -1023,7 +1023,7 @@
+ 				.get_length = _frag_get_length,
+ 				.add_payload = _frag_add_payload,
+ 				.remove_payload = (void*)return_null,
+-				.generate_payloads = nop,
++				.generate_payloads = (void*)nop,
+ 				.set_transform = _frag_set_transform,
+ 				.get_transform = _frag_get_transform,
+ 				.encrypt = _frag_encrypt,
+
+--- strongswan-5.9.14/src/libcharon/plugins/updown/updown_handler.c.orig	2025-10-20 11:06:16.776253232 -0400
++++ strongswan-5.9.14/src/libcharon/plugins/updown/updown_handler.c	2025-10-20 11:06:38.403066107 -0400
+@@ -220,7 +220,7 @@
+ 			.handler = {
+ 				.handle = _handle,
+ 				.release = _release,
+-				.create_attribute_enumerator = enumerator_create_empty,
++				.create_attribute_enumerator = (void*)enumerator_create_empty,
+ 			},
+ 			.create_dns_enumerator = _create_dns_enumerator,
+ 			.destroy = _destroy,
+
+--- strongswan-5.9.14/src/pki/command.c.orig	2025-10-20 11:10:03.104549996 -0400
++++ strongswan-5.9.14/src/pki/command.c	2025-10-20 11:10:21.546953865 -0400
+@@ -265,7 +265,7 @@
+ /**
+  * Show usage information
+  */
+-static int help(int c, char *v[])
++static int help()
+ {
+ 	return command_usage(NULL);
+ }
