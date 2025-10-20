@@ -1,0 +1,31 @@
+--- snort-2.9.20/./src/preprocessors/HttpInspect/include/file_decomp_PDF.h.orig	2025-10-20 09:49:12.610581419 -0400
++++ snort-2.9.20/./src/preprocessors/HttpInspect/include/file_decomp_PDF.h	2025-10-20 09:49:32.836086168 -0400
+@@ -80,6 +80,6 @@
+ 
+ fd_status_t File_Decomp_End_PDF( fd_session_p_t SessionPtr );
+ 
+-fd_status_t File_Decomp_PDF();
++fd_status_t File_Decomp_PDF( fd_session_p_t SessionPtr );
+ 
+ #endif /* FILE_DECOMP_PDF_H */
+
+--- snort-2.9.20/src/dynamic-preprocessors/dcerpc2/spp_dce2.c.orig	2025-10-20 10:13:39.574126159 -0400
++++ snort-2.9.20/src/dynamic-preprocessors/dcerpc2/spp_dce2.c	2025-10-20 10:13:58.581314250 -0400
+@@ -27,7 +27,7 @@
+ 
+ #include <assert.h>
+ #include <stddef.h>
+-#include <time.h> 
++#include <time.h>
+ 
+ #include "sf_types.h"
+ #include "spp_dce2.h"
+@@ -160,7 +160,7 @@
+ static void DCE2_AddPortsToPaf(struct _SnortConfig *, DCE2_Config *, tSfPolicyId);
+ static void DCE2_ScAddPortsToPaf(struct _SnortConfig *, void *);
+ static uint32_t max(uint32_t a, uint32_t b);
+-static uint32_t DCE2_GetReloadSafeMemcap();
++static uint32_t DCE2_GetReloadSafeMemcap(tSfPolicyUserContextId pConfig);
+ 
+ static bool dce2_file_cache_is_enabled = false;
+ static bool dce2_file_cache_was_enabled = false;
