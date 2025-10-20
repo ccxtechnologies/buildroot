@@ -1,0 +1,31 @@
+--- zeek-5.2.2/auxil/paraglob/include/paraglob/serializer.h.orig	2025-10-20 13:49:24.932965920 -0400
++++ zeek-5.2.2/auxil/paraglob/include/paraglob/serializer.h	2025-10-20 13:49:53.254265862 -0400
+@@ -6,6 +6,7 @@
+ 
+ #include <vector>
+ #include <memory> // std::unique_ptr
++#include <cstdint>
+ 
+ #include "paraglob/paraglob.h"
+ #include "paraglob/exceptions.h"
+
+--- zeek-5.2.2/auxil/paraglob/include/paraglob/paraglob.h.orig	2025-10-20 13:51:54.904552380 -0400
++++ zeek-5.2.2/auxil/paraglob/include/paraglob/paraglob.h	2025-10-20 13:52:18.377805547 -0400
+@@ -12,6 +12,7 @@
+ #include <unordered_map>
+ #include <vector>
+ #include <memory> // std::unique_ptr
++#include <cstdint>
+ 
+ class AhoCorasickPlus;
+
+--- zeek-5.2.2/auxil/paraglob/src/paraglob.cpp.orig	2025-10-20 13:53:23.850491404 -0400
++++ zeek-5.2.2/auxil/paraglob/src/paraglob.cpp	2025-10-20 13:53:37.110714971 -0400
+@@ -4,6 +4,8 @@
+ 
+ #include "ahocorasick/AhoCorasickPlus.h"
+ 
++#include <cstdint>
++
+ paraglob::Paraglob::Paraglob()
+   : my_ac(new AhoCorasickPlus) {}
