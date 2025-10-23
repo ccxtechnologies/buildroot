@@ -169,6 +169,9 @@ LINUX_MAKE_FLAGS = \
 	REGENERATE_PARSERS=1 \
 	DEPMOD=$(HOST_DIR)/sbin/depmod
 
+# This should be removed with next linux release
+LINUX_MAKE_FLAGS += CC="$(TARGET_CC) -std=gnu17"
+
 ifeq ($(BR2_REPRODUCIBLE),y)
 LINUX_MAKE_ENV += \
 	KBUILD_BUILD_VERSION=1 \
