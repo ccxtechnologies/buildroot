@@ -658,6 +658,20 @@ $(error No custom repo URL set. Check your BR2_LINUX_KERNEL_CUSTOM_REPO_URL sett
 endif
 endif
 
+# Create a custom scm version file to reflect the source version since the
+# archive will omit source directories like .git to maintain reproducible
+# hashes for the archives. Kernel also needs CONFIG_LOCALVERSION_AUTO enabled
+LINUX_CUSTOM_REPO_SCMVERSION = \
+	"-$(call qstrip,$(BR2_LINUX_KERNEL_CUSTOM_REPO_VERSION))"
+define LINUX_CUSTOM_REPO_SCMVERSION_HOOK
+	(cd $(@D); \
+		if [ ! -f .scmversion ]; then \
+			echo $(LINUX_CUSTOM_REPO_SCMVERSION) > .scmversion; \
+		fi)
+endef
+
+LINUX_POST_EXTRACT_HOOKS += LINUX_CUSTOM_REPO_SCMVERSION_HOOK
+
 ifeq ($(BR_BUILDING),y)
 
 ifeq ($(BR2_LINUX_KERNEL_CUSTOM_VERSION),y)
