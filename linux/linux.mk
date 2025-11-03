@@ -13,7 +13,7 @@ LINUX_LICENSE_FILES = \
 LINUX_CPE_ID_VENDOR = linux
 LINUX_CPE_ID_PRODUCT = linux_kernel
 LINUX_CPE_ID_PREFIX = cpe:2.3:o
-LINUX_CPE_ID_VERSION = 6.1.115
+LINUX_CPE_ID_VERSION = 6.1.157
 
 # Compute LINUX_SOURCE and LINUX_SITE from the configuration
 ifeq ($(BR2_LINUX_KERNEL_CUSTOM_TARBALL),y)
@@ -168,9 +168,6 @@ LINUX_MAKE_FLAGS = \
 	WERROR=0 \
 	REGENERATE_PARSERS=1 \
 	DEPMOD=$(HOST_DIR)/sbin/depmod
-
-# This should be removed with next linux release
-LINUX_MAKE_FLAGS += CC="$(TARGET_CC) -std=gnu17"
 
 ifeq ($(BR2_REPRODUCIBLE),y)
 LINUX_MAKE_ENV += \
