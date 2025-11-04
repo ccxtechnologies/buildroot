@@ -28,6 +28,9 @@ UBOOT_SOURCE = $(notdir $(UBOOT_TARBALL))
 else ifeq ($(BR2_TARGET_UBOOT_CUSTOM_GIT),y)
 UBOOT_SITE = $(call qstrip,$(BR2_TARGET_UBOOT_CUSTOM_REPO_URL))
 UBOOT_SITE_METHOD = git
+UBOOT_CPE_ID_VENDOR = nxp
+UBOOT_CPE_ID_PRODUCT = u-boot
+UBOOT_CPE_ID_VERSION = LSDK-21.08
 else ifeq ($(BR2_TARGET_UBOOT_CUSTOM_HG),y)
 UBOOT_SITE = $(call qstrip,$(BR2_TARGET_UBOOT_CUSTOM_REPO_URL))
 UBOOT_SITE_METHOD = hg
@@ -103,7 +106,13 @@ endif
 
 ifeq ($(BR2_TARGET_UBOOT_FORMAT_ITB),y)
 UBOOT_BINS += u-boot.itb
+ifneq ($(BR2_TARGET_UBOOT_USE_BINMAN),y)
 UBOOT_MAKE_TARGET += u-boot.itb
+endif
+endif
+
+ifeq ($(BR2_TARGET_UBOOT_FORMAT_QSPI_BIN),y)
+UBOOT_BINS += qspi.bin
 endif
 
 ifeq ($(BR2_TARGET_UBOOT_FORMAT_IMX),y)
@@ -196,7 +205,11 @@ endif
 
 ifeq ($(BR2_TARGET_UBOOT_NEEDS_OPTEE_TEE),y)
 UBOOT_DEPENDENCIES += optee-os
+ifeq ($(BR2_TARGET_UBOOT_NEEDS_OPTEE_TEE_ELF),y)
 UBOOT_MAKE_OPTS += TEE=$(BINARIES_DIR)/tee.elf
+else ifeq ($(BR2_TARGET_UBOOT_NEEDS_OPTEE_TEE_BIN),y)
+UBOOT_MAKE_OPTS += TEE=$(BINARIES_DIR)/tee.bin
+endif
 endif
 
 # TI K3 devices needs at least ti-sysfw (System Firmware) provided
@@ -449,7 +462,10 @@ endef
 
 ifeq ($(BR2_TARGET_UBOOT_ZYNQMP),y)
 
-ifeq ($(BR2_TARGET_UBOOT_ZYNQMP_PMUFW_PREBUILT),y)
+ifeq ($(BR2_TARGET_UBOOT_ZYNQMP_PMUFW_EMBEDDEDSW),y)
+UBOOT_DEPENDENCIES += xilinx-embeddedsw
+UBOOT_ZYNQMP_PMUFW_PATH = $(BINARIES_DIR)/pmufw.elf
+else ifeq ($(BR2_TARGET_UBOOT_ZYNQMP_PMUFW_PREBUILT),y)
 UBOOT_DEPENDENCIES += xilinx-prebuilt
 UBOOT_ZYNQMP_PMUFW_PATH = $(BINARIES_DIR)/pmufw.elf
 else

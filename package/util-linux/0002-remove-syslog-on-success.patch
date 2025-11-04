@@ -1,9 +1,9 @@
---- util-linux-2.40.2/login-utils/su-common.c.orig	2024-11-06 15:22:19.174151379 -0500
-+++ util-linux-2.40.2/login-utils/su-common.c	2024-11-06 15:22:40.357688686 -0500
-@@ -283,22 +283,6 @@
+--- util-linux-2.41.1/login-utils/su-common.c.orig	2025-08-28 16:15:29.463656804 -0400
++++ util-linux-2.41.1/login-utils/su-common.c	2025-08-28 16:16:32.594296270 -0400
+@@ -282,22 +282,6 @@
  }
  #endif
- 
+
 -/* Log the fact that someone has run su to the user given by PW;
 -   if SUCCESSFUL is true, they gave the correct password, etc.  */
 -
@@ -23,12 +23,11 @@
  /*
   * Log failed login attempts in _PATH_BTMP if that exists.
   */
-@@ -424,8 +408,6 @@
- 	if (rc == PAM_NEW_AUTHTOK_REQD)
- 		rc = pam_chauthtok(su->pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
+@@ -436,8 +420,6 @@
+ 	}
+
   done:
 -	log_syslog(su, !is_pam_failure(rc));
 -
  	if (is_pam_failure(rc)) {
  		const char *msg;
- 

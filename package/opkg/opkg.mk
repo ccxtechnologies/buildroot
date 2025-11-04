@@ -13,7 +13,7 @@ OPKG_INSTALL_STAGING = YES
 OPKG_CONF_OPTS = \
 	--enable-sha256 \
 	--without-acl \
-	--without-xattrs
+	--without-xattr
 
 ifeq ($(BR2_PACKAGE_OPKG_GPG_SIGN),y)
 OPKG_CONF_OPTS += --enable-gpg
@@ -42,6 +42,13 @@ OPKG_DEPENDENCIES += bzip2
 OPKG_CONF_OPTS += --enable-bzip2
 else
 OPKG_CONF_OPTS += --disable-bzip2
+endif
+
+ifeq ($(BR2_PACKAGE_LIBSOLV),y)
+OPKG_DEPENDENCIES += libsolv
+OPKG_CONF_OPTS += --with-libsolv
+else
+OPKG_CONF_OPTS += --without-libsolv
 endif
 
 ifeq ($(BR2_PACKAGE_LZ4),y)

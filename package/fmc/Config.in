@@ -2,15 +2,15 @@ comment "fmc needs a toolchain w/ C++"
 	depends on BR2_powerpc_e500mc || BR2_powerpc_e6500 || BR2_aarch64
 	depends on !BR2_INSTALL_LIBSTDCPP
 
-comment "fmc needs a Linux kernel to be built"
+comment "fmc needs a Linux kernel headers to be built"
 	depends on BR2_powerpc_e500mc || BR2_powerpc_e6500 || BR2_aarch64
-	depends on !BR2_LINUX_KERNEL
+	depends on !BR2_PACKAGE_LINUX_HEADERS
 
 config BR2_PACKAGE_FMC
 	bool "fmc"
 	depends on BR2_powerpc_e500mc || BR2_powerpc_e6500 || BR2_aarch64
 	depends on BR2_INSTALL_LIBSTDCPP
-	depends on BR2_LINUX_KERNEL # fmlib
+	depends on BR2_PACKAGE_LINUX_HEADERS # fmlib
 	select BR2_PACKAGE_TCLAP
 	select BR2_PACKAGE_LIBXML2
 	select BR2_PACKAGE_FMLIB

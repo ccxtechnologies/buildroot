@@ -7,12 +7,17 @@
 # Use the same VERSION and SITE as target glibc
 # As in glibc.mk, generate version string using:
 #   git describe --match 'glibc-*' --abbrev=40 origin/release/MAJOR.MINOR/master | cut -d '-' -f 2-
-LOCALEDEF_VERSION = 2.40-18-g5641780762723156b0d20a0b9f7df1d76831bab0
+LOCALEDEF_VERSION = 2.41-70-g1502c248d58cb99a203731707987a4342926e830
 LOCALEDEF_SOURCE = glibc-$(LOCALEDEF_VERSION).tar.gz
 LOCALEDEF_SITE = $(call github,bminor,glibc,$(LOCALEDEF_VERSION))
 HOST_LOCALEDEF_DL_SUBDIR = glibc
 HOST_LOCALEDEF_LICENSE = GPL-2.0+ LGPL-2.1
 HOST_LOCALEDEF_LICENSE_FILES = COPYING COPYING.LIB LICENSES
+LOCALEDEF_CPE_ID_VENDOR = gnu
+LOCALEDEF_CPE_ID_VENDOR = glibc
+# Extract the base version (e.g. 2.38) from LOCALEDEF_VERSION in order to
+# allow proper matching with the CPE database.
+LOCALEDEF_CPE_ID_VERSION = $(word 1, $(subst -,$(space),$(LOCALEDEF_VERSION)))
 
 HOST_LOCALEDEF_DEPENDENCIES = \
 	$(BR2_MAKE_HOST_DEPENDENCY) \

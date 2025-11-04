@@ -20,6 +20,7 @@ SYSTEMD_LICENSE = \
 SYSTEMD_LICENSE_FILES = \
 	LICENSE.GPL2 \
 	LICENSE.LGPL2.1 \
+	LICENSES/alg-sha1-public-domain.txt \
 	LICENSES/BSD-2-Clause.txt \
 	LICENSES/BSD-3-Clause.txt \
 	LICENSES/CC0-1.0.txt \
@@ -32,7 +33,7 @@ SYSTEMD_LICENSE_FILES = \
 	LICENSES/OFL-1.1.txt \
 	LICENSES/README.md
 SYSTEMD_CPE_ID_VALID = YES
-SYSTEMD_CPE_ID_VERSION = 256
+SYSTEMD_CPE_ID_VERSION = 258
 SYSTEMD_INSTALL_STAGING = YES
 SYSTEMD_DEPENDENCIES = \
 	$(BR2_COREUTILS_HOST_DEPENDENCY) \
@@ -50,9 +51,10 @@ SYSTEMD_SELINUX_MODULES = systemd udev xdg
 SYSTEMD_PROVIDES = udev
 
 SYSTEMD_CONF_OPTS += \
-	-Ddefault-hierarchy=hybrid \
+	-Dcreate-log-dirs=false \
 	-Didn=true \
 	-Dima=false \
+	-Dipe=false \
 	-Dkexec-path=/usr/sbin/kexec \
 	-Dkmod-path=/usr/bin/kmod \
 	-Dldconfig=false \
@@ -79,6 +81,7 @@ SYSTEMD_CONF_OPTS += \
 	-Dfuzz-tests=false \
 	-Dinstall-tests=false \
 	-Dlog-message-verification=disabled \
+	-Dsysupdated=disabled \
 	-Dtmpfiles=true \
 	-Dukify=disabled \
 	-Dbpf-framework=disabled \
@@ -89,11 +92,6 @@ SYSTEMD_CONF_OPTS += \
 SYSTEMD_CFLAGS = $(TARGET_CFLAGS)
 ifeq ($(BR2_OPTIMIZE_FAST),y)
 SYSTEMD_CFLAGS += -O3 -fno-finite-math-only
-endif
-
-ifeq ($(BR2_nios2),y)
-# Nios2 ld emits warnings, make warnings not to be treated as errors
-SYSTEMD_LDFLAGS = $(TARGET_LDFLAGS) -Wl,--no-fatal-warnings
 endif
 
 ifeq ($(BR2_TARGET_GENERIC_REMOUNT_ROOTFS_RW),y)
@@ -631,7 +629,7 @@ SYSTEMD_CONF_OPTS += -Dbootloader=enabled
 
 SYSTEMD_BOOT_EFI_ARCH = $(call qstrip,$(BR2_PACKAGE_SYSTEMD_BOOT_EFI_ARCH))
 define SYSTEMD_INSTALL_BOOT_FILES
-	$(INSTALL) -D -m 0644 $(@D)/build/src/boot/efi/systemd-boot$(SYSTEMD_BOOT_EFI_ARCH).efi \
+	$(INSTALL) -D -m 0644 $(@D)/buildroot-build/src/boot/systemd-boot$(SYSTEMD_BOOT_EFI_ARCH).efi \
 		$(BINARIES_DIR)/efi-part/EFI/BOOT/boot$(SYSTEMD_BOOT_EFI_ARCH).efi
 	$(INSTALL) -D -m 0644 $(SYSTEMD_PKGDIR)/boot-files/loader.conf \
 		$(BINARIES_DIR)/efi-part/loader/loader.conf
@@ -693,6 +691,7 @@ endef
 define SYSTEMD_USERS
 	# udev user groups
 	- - render -1 * - - - DRI rendering nodes
+	- - clock -1 * - - - Clock device nodes
 	# systemd user groups
 	- - systemd-journal -1 * - - - Journal
 	$(SYSTEMD_REMOTE_USER)
@@ -832,6 +831,7 @@ SYSTEMD_CONF_ENV = $(HOST_UTF8_LOCALE_ENV)
 SYSTEMD_NINJA_ENV = $(HOST_UTF8_LOCALE_ENV)
 
 define SYSTEMD_LINUX_CONFIG_FIXUPS
+	$(call KCONFIG_ENABLE_OPT,CONFIG_TMPFS)
 	$(call KCONFIG_ENABLE_OPT,CONFIG_DEVTMPFS)
 	$(call KCONFIG_ENABLE_OPT,CONFIG_CGROUPS)
 	$(call KCONFIG_ENABLE_OPT,CONFIG_INOTIFY_USER)
@@ -995,7 +995,8 @@ HOST_SYSTEMD_CONF_OPTS = \
 	-Dopenssl=disabled \
 	-Dp11kit=disabled \
 	-Dlibfido2=disabled \
-	-Dpcre2=disabled
+	-Dpcre2=disabled \
+	-Dsysupdated=disabled
 
 HOST_SYSTEMD_DEPENDENCIES = \
 	$(BR2_COREUTILS_HOST_DEPENDENCY) \

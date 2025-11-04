@@ -4,11 +4,13 @@
 #
 ################################################################################
 
-FMLIB_VERSION = LSDK-21.08
-FMLIB_SITE = $(call github,nxp-qoriq,fmlib,$(FMLIB_VERSION))
+FMLIB_SITE = $(TOPDIR)/../thirdparty/layerscape-fmlib
+FMLIB_SITE_METHOD = local
 FMLIB_LICENSE = BSD-3-Clause
-FMLIB_LICENSE_FILES = COPYING
-FMLIB_DEPENDENCIES = linux
+FMLIB_LICENSE_FILES = LICENSE
+FMLIB_CPE_ID_VENDOR = nxp
+FMLIB_CPE_ID_VERSION = lf-6.12.20-2.0.0
+FMLIB_DEPENDENCIES = linux-headers
 FMLIB_INSTALL_STAGING = YES
 
 # This package installs a static library only, so there's
@@ -18,7 +20,7 @@ FMLIB_INSTALL_TARGET = NO
 FMLIB_MAKE_OPTS = \
 	CC="$(TARGET_CC)" \
 	CROSS_COMPILE="$(TARGET_CROSS)" \
-	KERNEL_SRC="$(LINUX_DIR)" \
+	KERNEL_SRC="$(LINUX_HEADERS_DIR)" \
 	PREFIX="$(STAGING_DIR)/usr"
 
 FMLIB_ARCHTYPE = $(call qstrip,$(BR2_PACKAGE_FMLIB_ARCHTYPE))

@@ -4,12 +4,13 @@
 #
 ################################################################################
 
-SYSPROF_VERSION_MAJOR = 47
+SYSPROF_VERSION_MAJOR = 48
 SYSPROF_VERSION = $(SYSPROF_VERSION_MAJOR).0
 SYSPROF_SOURCE = sysprof-$(SYSPROF_VERSION).tar.xz
 SYSPROF_SITE = https://download.gnome.org/sources/sysprof/$(SYSPROF_VERSION_MAJOR)
 SYSPROF_LICENSE = GPL-3.0+
 SYSPROF_LICENSE_FILES = COPYING
+SYSPROF_CPE_ID_VENDOR = gnome
 SYSPROF_DEPENDENCIES = libglib2 libdex libunwind json-glib polkit
 SYSPROF_CONF_OPTS = \
 	-Ddevelopment=false \
@@ -21,6 +22,13 @@ SYSPROF_CONF_OPTS = \
 	-Dtests=false \
 	-Dtools=true \
 	-Dsystemdunitdir=/usr/lib/systemd/system
+
+ifeq ($(BR2_PACKAGE_SYSPROF_SYSPROFD),y)
+SYSPROF_CONF_OPTS += -Dsysprofd=bundled
+SYSPROF_DEPENDENCIES += elfutils
+else
+SYSPROF_CONF_OPTS += -Dsysprofd=none
+endif
 
 ifeq ($(BR2_PACKAGE_SYSTEMD),y)
 SYSPROF_DEPENDENCIES += systemd

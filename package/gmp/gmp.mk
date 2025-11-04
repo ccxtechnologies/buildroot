@@ -7,12 +7,18 @@
 GMP_VERSION = 6.3.0
 GMP_SITE = $(BR2_GNU_MIRROR)/gmp
 GMP_SOURCE = gmp-$(GMP_VERSION).tar.xz
+# 0001-acinclude.m4-Add-parameter-names-in-prototype-for-g.patch
+GMP_AUTORECONF = YES
 GMP_INSTALL_STAGING = YES
 GMP_LICENSE = LGPL-3.0+ or GPL-2.0+
 GMP_LICENSE_FILES = COPYING.LESSERv3 COPYINGv2
 GMP_CPE_ID_VENDOR = gmplib
 GMP_DEPENDENCIES = host-m4
 HOST_GMP_DEPENDENCIES = host-m4
+
+# 0001-Complete-function-prototype-in-acinclude.m4-for-C23-.patch
+GMP_AUTORECONF = YES
+HOST_GMP_AUTORECONF = YES
 
 GMP_CONF_ENV += CC_FOR_BUILD="$(HOSTCC) -std=c99"
 
