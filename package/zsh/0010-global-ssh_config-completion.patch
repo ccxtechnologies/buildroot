@@ -1,0 +1,14 @@
+--- zsh-5.9/Completion/Unix/Type/_ssh_hosts.orig	2025-11-12 11:30:52.927572295 -0500
++++ zsh-5.9/Completion/Unix/Type/_ssh_hosts	2025-11-12 11:31:35.518915901 -0500
+@@ -13,8 +13,10 @@
+ fi
+ if (( ind = ${words[(I)-F]} )); then
+   config=${~words[ind+1]} 2>/dev/null
+-else
++elif [[ -f "$HOME/.ssh/config" ]]; then
+   config="$HOME/.ssh/config"
++else
++  config="/etc/ssh/ssh_config"
+ fi
+ if [[ -r $config ]]; then
+   local key line host
