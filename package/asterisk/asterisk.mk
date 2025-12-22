@@ -311,6 +311,12 @@ ASTERISK_MAKE_ENV += PJPROJECT_CONFIGURE_OPTS=" \
 		--with-xmlto=no \
 		--with-fop=no"
 
+ASTERISK_INSTALL_TARGET_OPTS = \
+	$(ASTERISK_DIRS) \
+	DESTDIR=$(TARGET_DIR) \
+	LDCONFIG=true \
+	install
+
 $(eval $(autotools-package))
 
 #-------------------------------------------------------------------------------
