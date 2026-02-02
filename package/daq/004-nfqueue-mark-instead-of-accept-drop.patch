@@ -1,0 +1,37 @@
+--- daq-2.0.6/os-daq-modules/daq_nfq.c.orig	2019-09-24 13:06:55.555726660 -0400
++++ daq-2.0.6/os-daq-modules/daq_nfq.c	2019-09-24 15:06:11.512459762 -0400
+@@ -426,11 +426,11 @@
+ {
+     NfqImpl *impl = (NfqImpl*)data;
+     struct nfqnl_msg_packet_hdr* ph = nfq_get_msg_packet_hdr(nfad);
++    uint32_t mark = nfq_get_nfmark(nfad);
+ 
+     DAQ_Verdict verdict;
+     DAQ_PktHdr_t hdr;
+     uint8_t* pkt;
+-    int nf_verdict;
+     uint32_t data_len;
+ 
+     if ( impl->state != DAQ_STATE_STARTED )
+@@ -460,12 +460,13 @@
+         impl->stats.verdicts[verdict]++;
+         impl->stats.packets_received++;
+     }
+-    nf_verdict = ( impl->passive || s_fwd[verdict] ) ? NF_ACCEPT : NF_DROP;
++    mark = ( impl->passive || s_fwd[verdict] ) ?
++	    ((mark&0x00ffffff) | 0x01000000)  : ((mark&0x00ffffff) | 0x02000000);
+     data_len = ( verdict == DAQ_VERDICT_REPLACE ) ? hdr.caplen : 0;
+ 
+-    nfq_set_verdict(
++    nfq_set_verdict2(
+         impl->nf_queue, ntohl(ph->packet_id),
+-        nf_verdict, data_len, pkt);
++        NF_REPEAT, mark, data_len, pkt);
+ 
+     return 0;
+ }
+@@ -712,4 +713,3 @@
+     .hup_apply = NULL,
+     .hup_post = NULL,
+ };
+-
