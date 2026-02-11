@@ -24,7 +24,8 @@ HOST_CCACHE_CONF_OPTS += --with-bundled-zlib
 # We are ccache, so we can't use ccache
 HOST_CCACHE_CONF_ENV = \
 	CC="$(HOSTCC_NOCCACHE)" \
-	CXX="$(HOSTCXX_NOCCACHE)"
+	CXX="$(HOSTCXX_NOCCACHE)" \
+	CFLAGS="$(HOST_CFLAGS) -std=gnu17"
 
 # Patch host-ccache as follows:
 #  - Use BR_CACHE_DIR instead of CCACHE_DIR, because CCACHE_DIR
