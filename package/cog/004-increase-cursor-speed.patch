@@ -1,0 +1,16 @@
+--- cog-0.18.5/platform/drm/cog-platform-drm.c.orig	2026-04-06 14:28:47.682004497 -0400
++++ cog-0.18.5/platform/drm/cog-platform-drm.c	2026-04-06 14:29:25.833269991 -0400
+@@ -866,8 +866,11 @@
+         cursor.x = libinput_event_pointer_get_absolute_x_transformed(pointer_event, cursor.screen_width);
+         cursor.y = libinput_event_pointer_get_absolute_y_transformed(pointer_event, cursor.screen_height);
+     } else {
+-        int new_x = (int)cursor.x + (int)libinput_event_pointer_get_dx(pointer_event);
+-        int new_y = (int)cursor.y + (int)libinput_event_pointer_get_dy(pointer_event);
++        double speed_multiplier_x = 1.5;
++        double speed_multiplier_y = 2.5;
++
++        int new_x = (int)cursor.x + (int)libinput_event_pointer_get_dx(pointer_event) * speed_multiplier_x;
++        int new_y = (int)cursor.y + (int)libinput_event_pointer_get_dy(pointer_event) * speed_multiplier_y;
+ 
+         if (new_x < 0) {
+             cursor.x = 0;

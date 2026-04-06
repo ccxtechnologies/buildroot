@@ -1,0 +1,39 @@
+--- cog-0.18.5/platform/drm/cog-platform-drm.c.orig	2026-04-06 14:08:07.377452207 -0400
++++ cog-0.18.5/platform/drm/cog-platform-drm.c	2026-04-06 14:12:13.999470579 -0400
+@@ -866,20 +866,24 @@
+         cursor.x = libinput_event_pointer_get_absolute_x_transformed(pointer_event, cursor.screen_width);
+         cursor.y = libinput_event_pointer_get_absolute_y_transformed(pointer_event, cursor.screen_height);
+     } else {
+-        cursor.x += libinput_event_pointer_get_dx(pointer_event);
+-        cursor.y += libinput_event_pointer_get_dy(pointer_event);
+-    }
++        int new_x = (int)cursor.x + (int)libinput_event_pointer_get_dx(pointer_event);
++        int new_y = (int)cursor.y + (int)libinput_event_pointer_get_dy(pointer_event);
+ 
+-    if (cursor.x < 0) {
+-        cursor.x = 0;
+-    } else if (cursor.x > cursor.screen_width - 1) {
+-        cursor.x = cursor.screen_width - 1;
+-    }
++        if (new_x < 0) {
++            cursor.x = 0;
++        } else if (new_x > (int)cursor.screen_width - 1) {
++            cursor.x = cursor.screen_width - 1;
++        } else {
++            cursor.x = new_x;
++        }
+ 
+-    if (cursor.y < 0) {
+-        cursor.y = 0;
+-    } else if (cursor.y > cursor.screen_height - 1) {
+-        cursor.y = cursor.screen_height - 1;
++        if (new_y < 0) {
++            cursor.y = 0;
++        } else if (new_y > (int)cursor.screen_height - 1) {
++            cursor.y = cursor.screen_height - 1;
++        } else {
++            cursor.y = new_y;
++        }
+     }
+ 
+     struct wpe_input_pointer_event event = {
