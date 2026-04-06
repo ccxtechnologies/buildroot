@@ -1,0 +1,20 @@
+--- cog-0.18.5/platform/drm/kms.c.orig	2026-04-06 12:47:50.106433170 -0400
++++ cog-0.18.5/platform/drm/kms.c	2026-04-06 12:51:13.547813061 -0400
+@@ -361,9 +361,14 @@
+     else
+         screen->connected = false;
+ 
+-    memcpy(&screen->mode, &con->modes[0], sizeof(drmModeModeInfo));
+-    screen->width = screen->mode.hdisplay;
+-    screen->height = screen->mode.vdisplay;
++    if (con->count_modes > 0) {
++        memcpy(&screen->mode, &con->modes[0], sizeof(drmModeModeInfo));
++        screen->width = screen->mode.hdisplay;
++        screen->height = screen->mode.vdisplay;
++    } else {
++        screen->width = 0;
++        screen->height = 0;
++    }
+ 
+     drmModeFreeConnector(con);
+ }

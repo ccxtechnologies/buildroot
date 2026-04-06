@@ -1,0 +1,29 @@
+--- cog-0.18.5/platform/drm/cog-platform-drm.c.orig	2026-04-06 13:51:32.266367016 -0400
++++ cog-0.18.5/platform/drm/cog-platform-drm.c	2026-04-06 13:51:28.971343549 -0400
+@@ -618,13 +618,13 @@
+ {
+     bool cursor_supported = drmSetClientCap(drm_data.fd, DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1) == 0;
+     if (!cursor_supported) {
+-        g_warning("cursor not supported");
+         return FALSE;
+     }
+ 
+     cursor.device = kms_device_open(drm_data.fd);
+-    if (!cursor.device)
++    if (!cursor.device) {
+         return FALSE;
++    }
+ 
+     cursor.plane = kms_device_find_plane_by_type(cursor.device, DRM_PLANE_TYPE_CURSOR, 0);
+     if (!cursor.plane) {
+@@ -650,9 +650,7 @@
+     cursor.screen_height = cursor.device->screens[0]->height;
+ 
+     if (kms_plane_set(cursor.plane, cursor.cursor, cursor.x, cursor.y)) {
+-        g_clear_pointer(&cursor.device, kms_device_free);
+-        g_clear_pointer(&cursor.cursor, kms_framebuffer_free);
+-        return FALSE;
++        g_warning("Unable to draw cursor");
+     }
+ 
+     cursor.enabled = TRUE;
