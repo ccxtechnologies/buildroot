@@ -32,7 +32,8 @@ WPEWEBKIT_CONF_OPTS = \
 	-DENABLE_INTROSPECTION=OFF \
 	-DENABLE_MINIBROWSER=OFF \
 	-DENABLE_WEB_RTC=OFF \
-	-DUSE_ATK=OFF
+	-DUSE_ATK=OFF \
+	-DENABLE_WPE_PLATFORM=ON
 
 # WPE WebKit uses a bundled copy of Skia since 2.46.0 for
 # little-endian targets, and Cairo for big-endian ones.
