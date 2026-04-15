@@ -17,7 +17,7 @@ WPEWEBKIT_CPE_ID_VENDOR = wpewebkit
 WPEWEBKIT_CPE_ID_PRODUCT = wpe_webkit
 WPEWEBKIT_DEPENDENCIES = host-gperf host-python3 host-ruby host-unifdef \
 	harfbuzz icu jpeg libepoxy libgcrypt libgles libsoup3 libtasn1 \
-	libpng libxslt wayland-protocols webp wpebackend-fdo
+	libpng libxslt wayland-protocols webp wpebackend-fdo libinput
 
 WPEWEBKIT_CMAKE_BACKEND = ninja
 
