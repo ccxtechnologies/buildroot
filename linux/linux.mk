@@ -13,7 +13,6 @@ LINUX_LICENSE_FILES = \
 LINUX_CPE_ID_VENDOR = linux
 LINUX_CPE_ID_PRODUCT = linux_kernel
 LINUX_CPE_ID_PREFIX = cpe:2.3:o
-LINUX_CPE_ID_VERSION = 6.1.157
 
 # Compute LINUX_SOURCE and LINUX_SITE from the configuration
 ifeq ($(BR2_LINUX_KERNEL_CUSTOM_TARBALL),y)
@@ -23,6 +22,12 @@ LINUX_SOURCE = $(notdir $(LINUX_TARBALL))
 else ifeq ($(BR2_LINUX_KERNEL_CUSTOM_GIT),y)
 LINUX_SITE = $(call qstrip,$(BR2_LINUX_KERNEL_CUSTOM_REPO_URL))
 LINUX_SITE_METHOD = git
+# Override CPE ID Version based on the custom git URL
+ifneq ($(findstring linux-ccx-lts-6.18,$(LINUX_SITE)),)
+LINUX_CPE_ID_VERSION = 6.18.25
+else ifneq ($(findstring linux-ccx-lts-6.1,$(LINUX_SITE)),)
+LINUX_CPE_ID_VERSION = 6.1.157
+endif
 ifeq ($(BR2_LINUX_KERNEL_CUSTOM_REPO_GIT_SUBMODULES),y)
 LINUX_GIT_SUBMODULES = YES
 endif
