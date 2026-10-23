@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-STRONGSWAN_VERSION = 6.0.5
+STRONGSWAN_VERSION = 6.1.0
 STRONGSWAN_SOURCE = strongswan-$(STRONGSWAN_VERSION).tar.bz2
 STRONGSWAN_SITE = https://download.strongswan.org
 STRONGSWAN_LICENSE = GPL-2.0+
