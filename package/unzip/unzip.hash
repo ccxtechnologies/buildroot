@@ -1,4 +1,4 @@
-# From https://snapshot.debian.org/archive/debian-debug/20250311T212313Z/pool/main/u/unzip/unzip_6.0-29.dsc
+# From https://snapshot.debian.org/archive/debian/20250311T215724Z/pool/main/u/unzip/unzip_6.0-29.dsc
 sha256  036d96991646d0449ed0aa952e4fbe21b476ce994abc276e49d30e686708bd37  unzip_6.0.orig.tar.gz
 sha256  14043e5ea351c02b3bc8676e1e6d20d79b9a690b6d7520e8138ac629cc048417  unzip_6.0-29.debian.tar.xz
 

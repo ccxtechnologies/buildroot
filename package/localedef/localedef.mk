@@ -4,12 +4,13 @@
 #
 ################################################################################
 
-# Use the same VERSION and SITE as target glibc
+# Use the same VERSION, SITE, and LICENSE as target glibc
 # As in glibc.mk, generate version string using:
 #   git describe --match 'glibc-*' --abbrev=40 origin/release/MAJOR.MINOR/master | cut -d '-' -f 2-
-LOCALEDEF_VERSION = 2.41-70-g1502c248d58cb99a203731707987a4342926e830
-LOCALEDEF_SOURCE = glibc-$(LOCALEDEF_VERSION).tar.gz
-LOCALEDEF_SITE = $(call github,bminor,glibc,$(LOCALEDEF_VERSION))
+LOCALEDEF_VERSION = 2.44-57-g34106fee698c83eb0af71d4d0381e66b399be746
+LOCALEDEF_SOURCE = glibc-$(LOCALEDEF_VERSION)$(BR_FMT_VERSION_git).tar.gz
+LOCALEDEF_SITE = https://gitlab.com/gnutools/glibc.git
+LOCALEDEF_SITE_METHOD = git
 HOST_LOCALEDEF_DL_SUBDIR = glibc
 HOST_LOCALEDEF_LICENSE = GPL-2.0+ LGPL-2.1
 HOST_LOCALEDEF_LICENSE_FILES = COPYING COPYING.LIB LICENSES
@@ -18,6 +19,15 @@ LOCALEDEF_CPE_ID_VENDOR = glibc
 # Extract the base version (e.g. 2.38) from LOCALEDEF_VERSION in order to
 # allow proper matching with the CPE database.
 LOCALEDEF_CPE_ID_VERSION = $(word 1, $(subst -,$(space),$(LOCALEDEF_VERSION)))
+
+LOCALEDEF_LICENSE = \
+	GPL-2.0+ (programs), \
+	LGPL-2.1+, BSD-2-Clause, BSD-3-Clause, BSL-1.0, FSFAP, ISC, other permissive licenses, public domain (library), \
+	LGPL-3.0+ (sysdeps/htl/raise.c, for Hurd only), \
+	GPL-3.0+ (scripts/move-if-change), \
+	GPL-3.0+ WITH Texinfo-exception (manual/texinfo.tex), \
+	GFDL-1.3-or-later (manual)
+LOCALEDEF_LICENSE_FILES = COPYINGv2 COPYING.LESSERv2 COPYINGv3 LICENSES manual/fdl-1.3.texi
 
 HOST_LOCALEDEF_DEPENDENCIES = \
 	$(BR2_MAKE_HOST_DEPENDENCY) \

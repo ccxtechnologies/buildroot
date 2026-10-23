@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-EXIM_VERSION = 4.98.2
+EXIM_VERSION = 4.100.1
 EXIM_SOURCE = exim-$(EXIM_VERSION).tar.xz
 EXIM_SITE = https://ftp.exim.org/pub/exim/exim4
 EXIM_LICENSE = GPL-2.0+
@@ -99,10 +99,12 @@ define EXIM_CONFIGURE_TOOLCHAIN
 	$(call exim-config-add,CFLAGS,$(TARGET_CFLAGS))
 	$(call exim-config-add,AR,$(TARGET_AR) cq)
 	$(call exim-config-add,RANLIB,$(TARGET_RANLIB))
+	$(call exim-config-add,LD,$(TARGET_LD))
 	$(call exim-config-add,HOSTCC,$(HOSTCC))
 	$(call exim-config-add,HOSTCFLAGS,$(HOSTCFLAGS))
 	$(call exim-config-add,EXTRALIBS,$(EXIM_EXTRALIBS))
 	$(EXIM_FIX_IP_OPTIONS_FOR_MUSL)
+	$(EXIM_DISABLE_VALGRIND)
 endef
 
 ifneq ($(call qstrip,$(BR2_PACKAGE_EXIM_CUSTOM_CONFIG_FILE)),)
@@ -125,11 +127,39 @@ ifeq ($(BR2_STATIC_LIBS),y)
 EXIM_STATIC_FLAGS = LFLAGS="-pthread --static"
 endif
 
+# We need to pass an argument to ld for setting the emulation when
+# building for MIPS architecture, otherwise the default one will always
+# be used and the compilation for most variants will fail.
+ifeq ($(BR2_mips),y)
+EXIM_LDFLAGS = -m elf32btsmip
+else ifeq ($(BR2_mipsel),y)
+EXIM_LDFLAGS = -m elf32ltsmip
+else ifeq ($(BR2_mips64),y)
+ifeq ($(BR2_MIPS_NABI32),y)
+EXIM_LDFLAGS = -m elf32btsmipn32
+else
+EXIM_LDFLAGS = -m elf64btsmip
+endif
+else ifeq ($(BR2_mips64el),y)
+ifeq ($(BR2_MIPS_NABI32),y)
+EXIM_LDFLAGS = -m elf32ltsmipn32
+else
+EXIM_LDFLAGS = -m elf64ltsmip
+endif
+endif
+
 ifeq ($(BR2_PACKAGE_LIBEXECINFO),y)
 EXIM_DEPENDENCIES += libexecinfo
 EXIM_EXTRALIBS += -lexecinfo
 else ifeq ($(BR2_TOOLCHAIN_USES_GLIBC),)
 EXIM_CFLAGS = -DNO_EXECINFO
+endif
+
+# src/valgrind.h contains inline asm not compatible with thumb1
+ifeq ($(BR2_ARM_INSTRUCTIONS_THUMB),y)
+define EXIM_DISABLE_VALGRIND
+	$(call exim-config-change,NVALGRIND,1)
+endef
 endif
 
 # We need the host version of macro_predef during the build, before
@@ -142,6 +172,7 @@ define EXIM_BUILD_CMDS
 		CFLAGS="-std=c99 $(HOST_CFLAGS)" \
 		LFLAGS="-fPIC $(HOST_LDFLAGS)"
 	$(TARGET_MAKE_ENV) build=br $(MAKE) -C $(@D) $(EXIM_STATIC_FLAGS) \
+		LDFLAGS_PARTIAL="$(EXIM_LDFLAGS)" \
 		CFLAGS="-std=c99 $(TARGET_CFLAGS) $(EXIM_CFLAGS)" exim
 endef
 

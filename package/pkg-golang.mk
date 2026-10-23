@@ -40,6 +40,12 @@ GO_BIN = $(HOST_DIR)/bin/go
 
 define inner-golang-package
 
+# Legacy
+ifneq ($$($(2)_INSTALL_BINS),)
+$$(error Package $(1) sets $(2)_INSTALL_BINS, which is no longer supported; \
+see the manual: https://buildroot.org/manual.html#migrating-golang-package )
+endif
+
 $(2)_BUILD_OPTS += \
 	-ldflags "$$($(2)_LDFLAGS)" \
 	-modcacherw \
@@ -61,9 +67,16 @@ $(2)_BUILD_TARGETS ?= .
 # after each build target building them (below in <pkg>_BUILD_CMDS).
 ifeq ($$($(2)_BUILD_TARGETS),.)
 $(2)_BIN_NAME ?= $$($(2)_RAWNAME)
+$(2)_INSTALL_BINS ?= $$($(2)_BIN_NAME)
+else ifeq ($$(words $$($(2)_BUILD_TARGETS)),1)
+$(2)_BIN_NAME ?= $$(notdir $$($(2)_BUILD_TARGETS))
+$(2)_INSTALL_BINS ?= $$($(2)_BIN_NAME)
+else
+ifneq ($$($(2)_BIN_NAME),)
+$$(error $(1) sets $(2)_BIN_NAME while there are multiple targets in $(2)_BUILD_TARGETS)
 endif
-
-$(2)_INSTALL_BINS ?= $$($(2)_RAWNAME)
+$(2)_INSTALL_BINS ?= $$(notdir $$($(2)_BUILD_TARGETS))
+endif
 
 # Source files in Go usually use an import path resolved around
 # domain/vendor/software. We infer domain/vendor/software from the upstream URL
@@ -88,7 +101,7 @@ $(2)_POST_PATCH_HOOKS += $(2)_GEN_GOMOD
 $(2)_DOWNLOAD_POST_PROCESS = go
 $(2)_DL_ENV += \
 	$$(HOST_GO_COMMON_ENV) \
-	GOPROXY=direct \
+	GOPROXY=$$(call qstrip,$$(BR2_GOPROXY)) \
 	$$($(2)_GO_ENV)
 
 # If building in a sub directory, do the vendoring in there
@@ -131,6 +144,17 @@ ifeq ($(BR2_aarch64),y)
 # use BFD.
 # See: https://github.com/golang/go/issues/22040
 $(2)_EXTLDFLAGS += -fuse-ld=bfd
+endif
+
+ifeq ($(BR2_ARM_INSTRUCTIONS_THUMB)$(BR2_PACKAGE_HOST_GO_TARGET_CGO_LINKING_SUPPORTS),yy)
+# On ARMv5, runtime/cgo calls helpers such as __sync_synchronize that
+# come from libgcc.a. With BR2_ARM_INSTRUCTIONS_THUMB, libgcc.a is built
+# as Thumb code while Go emits ARM code. A call between the two must
+# switch the processor to the other instruction set, which Go's
+# internal linker cannot do: it aborts on the R_ARM_THM_CALL relocation.
+# The external linker (GNU ld) can, by rewriting the call to BLX or
+# routing it through a small stub, so use it.
+$(2)_LDFLAGS += -linkmode=external
 endif
 
 ifneq ($$($(2)_EXTLDFLAGS),)

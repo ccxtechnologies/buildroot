@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-PYTHON_SDBUS_VERSION = 0.14.0
+PYTHON_SDBUS_VERSION = 0.14.3
 PYTHON_SDBUS_SOURCE = sdbus-$(PYTHON_SDBUS_VERSION).tar.gz
-PYTHON_SDBUS_SITE = https://files.pythonhosted.org/packages/17/9a/1dc010428fa1f444809d9aa1adb3ce231dae891b5f33635d8f4d7a8e33fd
+PYTHON_SDBUS_SITE = https://files.pythonhosted.org/packages/69/0e/14b0f16087cf7f1e1817da9282dcb590fe27030c6ba136c3e35dff647f3a
 PYTHON_SDBUS_SETUP_TYPE = setuptools
 PYTHON_SDBUS_LICENSE = LGPL-2.1+
 PYTHON_SDBUS_LICENSE_FILES = COPYING

@@ -4,6 +4,21 @@
 #
 ################################################################################
 
+# When updating systemd, take care of the following:
+# - Check if the requirements have changed (see README), in particular
+#   arch and headers
+# - If yes, propagate the dependencies to BR2_INIT_SYSTEMD
+# - If the required kernel options have changed, update the Config.in
+#   help text and the list of KCONFIG_ENABLE_OPT.
+# - Check if there are new meson_options. Make sure all options are set
+#   explicitly (usually to default value).
+# - If there are new services:
+#   - create new options for them (if they really are optional);
+#   - create a new _USER if necessary;
+#   - create new directory (with _PERMISSIONS) if necessary.
+# - Diff sysusers.d with the previous version
+# - Diff factory/etc/nsswitch.conf with the previous version
+#   (details are often sprinkled around in README and manpages)
 SYSTEMD_SITE = $(TOPDIR)/../thirdparty/systemd
 SYSTEMD_SITE_METHOD = local
 SYSTEMD_LICENSE = \
@@ -48,7 +63,7 @@ SYSTEMD_DEPENDENCIES = \
 
 SYSTEMD_SELINUX_MODULES = systemd udev xdg
 
-SYSTEMD_PROVIDES = udev
+SYSTEMD_PROVIDES = libudev udev
 
 SYSTEMD_CONF_OPTS += \
 	-Dcreate-log-dirs=false \
@@ -87,7 +102,8 @@ SYSTEMD_CONF_OPTS += \
 	-Dbpf-framework=disabled \
 	-Dvmlinux-h=disabled \
 	-Dumount-path=/usr/bin/umount \
-	-Dxenctrl=disabled
+	-Dxenctrl=disabled \
+	-Dlibmount=enabled
 
 SYSTEMD_CFLAGS = $(TARGET_CFLAGS)
 ifeq ($(BR2_OPTIMIZE_FAST),y)
@@ -245,13 +261,6 @@ SYSTEMD_DEPENDENCIES += libcurl
 SYSTEMD_CONF_OPTS += -Dlibcurl=enabled
 else
 SYSTEMD_CONF_OPTS += -Dlibcurl=disabled
-endif
-
-ifeq ($(BR2_PACKAGE_LIBGCRYPT),y)
-SYSTEMD_DEPENDENCIES += libgcrypt
-SYSTEMD_CONF_OPTS += -Dgcrypt=enabled
-else
-SYSTEMD_CONF_OPTS += -Dgcrypt=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_P11_KIT),y)
@@ -547,6 +556,12 @@ else
 SYSTEMD_CONF_OPTS += -Dsysupdate=disabled
 endif
 
+ifeq ($(BR2_PACKAGE_SYSTEMD_NSPAWN),y)
+SYSTEMD_CONF_OPTS += -Dnspawn=enabled
+else
+SYSTEMD_CONF_OPTS += -Dnspawn=disabled
+endif
+
 ifeq ($(BR2_PACKAGE_SYSTEMD_NETWORKD),y)
 SYSTEMD_CONF_OPTS += -Dnetworkd=true
 SYSTEMD_NETWORKD_USER = systemd-network -1 systemd-network -1 * - - - systemd Network Management
@@ -575,22 +590,11 @@ endif
 
 ifeq ($(BR2_PACKAGE_LIBOPENSSL),y)
 SYSTEMD_CONF_OPTS += \
-	-Dgnutls=disabled \
-	-Dopenssl=enabled \
 	-Ddns-over-tls=openssl \
 	-Ddefault-dns-over-tls=opportunistic
 SYSTEMD_DEPENDENCIES += openssl
-else ifeq ($(BR2_PACKAGE_GNUTLS),y)
-SYSTEMD_CONF_OPTS += \
-	-Dgnutls=enabled \
-	-Dopenssl=disabled \
-	-Ddns-over-tls=gnutls \
-	-Ddefault-dns-over-tls=opportunistic
-SYSTEMD_DEPENDENCIES += gnutls
 else
 SYSTEMD_CONF_OPTS += \
-	-Dgnutls=disabled \
-	-Dopenssl=disabled \
 	-Ddns-over-tls=false \
 	-Ddefault-dns-over-tls=no
 endif
@@ -691,7 +695,7 @@ endef
 define SYSTEMD_USERS
 	# udev user groups
 	- - render -1 * - - - DRI rendering nodes
-	- - clock -1 * - - - Clock device nodes
+	- - clock -1 * - - - PTP and RTC device group
 	# systemd user groups
 	- - systemd-journal -1 * - - - Journal
 	$(SYSTEMD_REMOTE_USER)
@@ -963,7 +967,7 @@ HOST_SYSTEMD_CONF_OPTS = \
 	-Dinitrd=false \
 	-Dxdg-autostart=false \
 	-Dkernel-install=false \
-	-Dukify=disabled \
+	-Dukify=enabled \
 	-Danalyze=false \
 	-Dbpf-framework=disabled \
 	-Dvmlinux-h=disabled \
@@ -996,7 +1000,9 @@ HOST_SYSTEMD_CONF_OPTS = \
 	-Dp11kit=disabled \
 	-Dlibfido2=disabled \
 	-Dpcre2=disabled \
-	-Dsysupdated=disabled
+	-Dsysupdated=disabled \
+	-Dnspawn=disabled \
+	-Dlibmount=enabled
 
 HOST_SYSTEMD_DEPENDENCIES = \
 	$(BR2_COREUTILS_HOST_DEPENDENCY) \
@@ -1005,7 +1011,8 @@ HOST_SYSTEMD_DEPENDENCIES = \
 	host-libcap \
 	host-libxcrypt \
 	host-gperf \
-	host-python-jinja2
+	host-python-jinja2 \
+	host-python-pefile
 
 HOST_SYSTEMD_NINJA_ENV = DESTDIR=$(HOST_DIR)
 
