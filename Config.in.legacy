@@ -448,7 +448,7 @@ config BR2_PACKAGE_PCRE
 
 config BR2_PACKAGE_SNORT
 	bool "snort removed"
-	select BR2_LEGACY
+#	select BR2_LEGACY
 	help
 	  snort was no longer maintained upstream, so it has been
 	  dropped. Look at snort3 for an alternative.
