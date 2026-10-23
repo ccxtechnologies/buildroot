@@ -32,6 +32,7 @@ LIBAPPARMOR_CONF_OPTS = \
 
 ifeq ($(BR2_PACKAGE_PYTHON3),y)
 LIBAPPARMOR_DEPENDENCIES += host-python3 host-python-setuptools host-swig python3
+LIBAPPARMOR_MAKE_ENV += $(PKG_PYTHON_SETUPTOOLS_ENV)
 LIBAPPARMOR_CONF_OPTS += \
 	--with-python \
 	PYTHON=$(HOST_DIR)/bin/python3 \
