@@ -381,7 +381,7 @@ config BR2_PACKAGE_KODI_PVR_HDHOMERUN
 
 config BR2_PACKAGE_ZEEK
 	bool "zeek removed"
-	select BR2_LEGACY
+#	select BR2_LEGACY
 	help
 	  The zeek package was not maintained, with numerous build
 	  issues and severely lagging behind upstream. so it has been
@@ -419,7 +419,7 @@ config BR2_PACKAGE_PHIDGETWEBSERVICE
 
 config BR2_PACKAGE_DAQ
 	bool "daq removed"
-	select BR2_LEGACY
+#	select BR2_LEGACY
 	help
 	  The only dependee, snort, has been removed. Look at daq3
 	  for an alternative.
@@ -441,7 +441,7 @@ config BR2_KERNEL_HEADERS_6_19
 
 config BR2_PACKAGE_PCRE
 	bool "pcre removed"
-	select BR2_LEGACY
+#	select BR2_LEGACY
 	help
 	  pcre was no longer maintained upstream, so it has been
 	  dropped. Look at pcre2 for an alternative.
