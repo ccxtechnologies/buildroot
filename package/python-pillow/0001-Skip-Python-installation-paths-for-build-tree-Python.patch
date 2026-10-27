@@ -1,0 +1,33 @@
+--- a/setup.py.orig	2026-10-27 14:54:27.750207846 -0400
++++ b/setup.py	2026-10-27 14:58:51.602537511 -0400
+@@ -572,16 +572,20 @@
+                 for d in os.environ[k].split(os.path.pathsep):
+                     _add_directory(library_dirs, d)
+ 
+-        _add_directory(
+-            library_dirs,
+-            (sys.prefix == sys.base_prefix and sysconfig.get_config_var("LIBDIR"))
+-            or os.path.join(sys.prefix, "lib"),
+-        )
+-        _add_directory(
+-            include_dirs,
+-            (sys.prefix == sys.base_prefix and sysconfig.get_config_var("INCLUDEDIR"))
+-            or os.path.join(sys.prefix, "include"),
+-        )
++        if not sysconfig.is_python_build():
++            _add_directory(
++                library_dirs,
++                (sys.prefix == sys.base_prefix and sysconfig.get_config_var("LIBDIR"))
++                or os.path.join(sys.prefix, "lib"),
++            )
++            _add_directory(
++                include_dirs,
++                (
++                    sys.prefix == sys.base_prefix
++                    and sysconfig.get_config_var("INCLUDEDIR")
++                )
++                or os.path.join(sys.prefix, "include"),
++            )
+ 
+         #
+         # add platform directories
