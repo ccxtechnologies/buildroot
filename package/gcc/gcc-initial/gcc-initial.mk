@@ -12,6 +12,9 @@ HOST_GCC_INITIAL_LICENSE_FILES = $(HOST_GCC_LICENSE_FILES)
 GCC_INITIAL_CPE_ID_VENDOR = gnu
 GCC_INITIAL_CPE_ID_PRODUCT = gcc
 
+GCC_INITIAL_CPE_ID_VENDOR = gnu
+GCC_INITIAL_CPE_ID_PRODUCT = gcc
+
 # We do not have a 'gcc' package per-se; we only have two incarnations,
 # gcc-initial and gcc-final. gcc-initial is just an internal step that
 # users should not care about, while gcc-final is the one they shall see.
@@ -19,7 +22,7 @@ HOST_GCC_INITIAL_DL_SUBDIR = gcc
 
 HOST_GCC_INITIAL_DEPENDENCIES = $(HOST_GCC_COMMON_DEPENDENCIES)
 
-HOST_GCC_INITIAL_EXCLUDES = $(HOST_GCC_EXCLUDES)
+HOST_GCC_INITIAL_EXCLUDES = $(HOST_GCC_EXCLUDES) libatomic
 
 HOST_GCC_INITIAL_LICENSE = GPL-2.0+ GPLv3 LGPL-3.0+
 HOST_GCC_INITIAL_LICENSE_FILES = COPYING COPYING3 COPYING.LIB COPYING.RUNTIME

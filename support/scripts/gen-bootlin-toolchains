@@ -36,6 +36,7 @@ arches = {
     'arcle-750d': {
         'conditions': ['BR2_arcle', 'BR2_arc750d'],
         'prefix': 'arc',
+        'gdbserver': False,
     },
     'arcle-hs38': {
         'conditions': ['BR2_arcle', 'BR2_archs38'],
@@ -52,12 +53,12 @@ arches = {
         'prefix': 'arm',
     },
     'armv7-eabihf': {
-        'conditions': ['BR2_arm', '(BR2_ARM_CPU_ARMV7A && BR2_ARM_EABIHF) || BR2_ARM_CPU_ARMV8A'],
+        'conditions': ['BR2_arm', 'BR2_ARM_EABIHF', '(BR2_ARM_CPU_ARMV7A || BR2_ARM_CPU_ARMV8A)'],
         'test_options': ['BR2_arm', 'BR2_cortex_a8', 'BR2_ARM_EABIHF'],
         'prefix': 'arm',
     },
     'armebv7-eabihf': {
-        'conditions': ['BR2_armeb', '(BR2_ARM_CPU_ARMV7A && BR2_ARM_EABIHF) || BR2_ARM_CPU_ARMV8A'],
+        'conditions': ['BR2_armeb', 'BR2_ARM_EABIHF', '(BR2_ARM_CPU_ARMV7A || BR2_ARM_CPU_ARMV8A)'],
         'test_options': ['BR2_armeb', 'BR2_cortex_a8', 'BR2_ARM_EABIHF'],
         'prefix': 'armeb',
     },
@@ -67,7 +68,7 @@ arches = {
         'prefix': 'arm',
     },
     'm68k-68xxx': {
-        'conditions': ['BR2_m68k_m68k'],
+        'conditions': ['BR2_m68k_m68k', 'BR2_USE_MMU'],
         'test_options': ['BR2_m68k', 'BR2_m68k_68040'],
         'prefix': 'm68k',
     },
@@ -155,7 +156,7 @@ arches = {
         'prefix': 'powerpc64le',
     },
     'riscv32-ilp32d': {
-        'conditions': ['BR2_riscv', 'BR2_riscv_g', 'BR2_RISCV_32', 'BR2_RISCV_ABI_ILP32D'],
+        'conditions': ['BR2_riscv', 'BR2_riscv_g', 'BR2_RISCV_32', 'BR2_RISCV_ABI_ILP32D', 'BR2_USE_MMU'],
         'prefix': 'riscv32',
     },
     'riscv64-lp64d': {
@@ -268,7 +269,7 @@ arches = {
         'prefix': 'i686',
     },
     'xtensa-lx60': {
-        'conditions': ['BR2_xtensa', 'BR2_XTENSA_CUSTOM', 'BR2_XTENSA_LITTLE_ENDIAN'],
+        'conditions': ['BR2_xtensa', 'BR2_XTENSA_CUSTOM', 'BR2_XTENSA_LITTLE_ENDIAN', 'BR2_USE_MMU'],
         'prefix': 'xtensa',
     },
 }
@@ -362,7 +363,7 @@ class Toolchain:
                 selects.append("BR2_ENABLE_LOCALE")
 
             # thread support
-            if frag.startswith("BR2_TOOLCHAIN_EXTERNAL_HAS_THREADS"):
+            if frag.startswith("BR2_TOOLCHAIN_EXTERNAL_HAS_THREADS="):
                 selects.append("BR2_TOOLCHAIN_HAS_THREADS")
 
             if frag.startswith("BR2_TOOLCHAIN_EXTERNAL_HAS_THREADS_DEBUG"):

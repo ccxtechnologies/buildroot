@@ -8,9 +8,7 @@ UBOOT_VERSION = $(call qstrip,$(BR2_TARGET_UBOOT_VERSION))
 UBOOT_BOARD_NAME = $(call qstrip,$(BR2_TARGET_UBOOT_BOARDNAME))
 
 UBOOT_LICENSE = GPL-2.0+
-ifeq ($(BR2_TARGET_UBOOT_LATEST_VERSION),y)
-UBOOT_LICENSE_FILES = Licenses/gpl-2.0.txt
-endif
+UBOOT_LICENSE_FILES = $(call qstrip,$(BR2_TARGET_UBOOT_LICENSE_FILES))
 UBOOT_CPE_ID_VENDOR = denx
 UBOOT_CPE_ID_PRODUCT = u-boot
 
@@ -40,7 +38,7 @@ UBOOT_SITE = $(call qstrip,$(BR2_TARGET_UBOOT_CUSTOM_REPO_URL))
 UBOOT_SITE_METHOD = svn
 else
 # Handle stable official U-Boot versions
-UBOOT_SITE = https://ftp.denx.de/pub/u-boot
+UBOOT_SITE = https://git.u-boot-project.org/u-boot/u-boot/-/releases/v$(UBOOT_VERSION)/downloads
 UBOOT_SOURCE = u-boot-$(UBOOT_VERSION).tar.bz2
 endif
 
@@ -210,6 +208,8 @@ ifeq ($(BR2_TARGET_UBOOT_NEEDS_OPTEE_TEE_ELF),y)
 UBOOT_MAKE_OPTS += TEE=$(BINARIES_DIR)/tee.elf
 else ifeq ($(BR2_TARGET_UBOOT_NEEDS_OPTEE_TEE_BIN),y)
 UBOOT_MAKE_OPTS += TEE=$(BINARIES_DIR)/tee.bin
+else ifeq ($(BR2_TARGET_UBOOT_NEEDS_OPTEE_TEE_RAW_BIN),y)
+UBOOT_MAKE_OPTS += TEE=$(BINARIES_DIR)/tee-raw.bin
 endif
 endif
 
@@ -228,13 +228,21 @@ endif
 
 # Mainline U-Boot versions can create the i.MX specific boot images
 # and need some NXP firmware blobs.
+ifneq ($(BR2_TARGET_UBOOT_NEEDS_IMX_FIRMWARE)$(BR2_TARGET_UBOOT_NEEDS_IMX_ELE_FIRMWARE),)
+
 ifeq ($(BR2_TARGET_UBOOT_NEEDS_IMX_FIRMWARE),y)
 UBOOT_DEPENDENCIES += firmware-imx
-UBOOT_IMX_FW_FILES = \
+UBOOT_IMX_FW_FILES += \
 	$(if $(BR2_PACKAGE_FIRMWARE_IMX_NEEDS_HDMI_FW),signed_hdmi_imx8m.bin) \
 	$(if $(BR2_PACKAGE_FIRMWARE_IMX_LPDDR4),lpddr4*.bin) \
 	$(if $(BR2_PACKAGE_FIRMWARE_IMX_DDR4),ddr4*.bin) \
 	$(if $(BR2_PACKAGE_FIRMWARE_IMX_DDR3),ddr3*.bin)
+endif
+
+ifeq ($(BR2_TARGET_UBOOT_NEEDS_IMX_ELE_FIRMWARE),y)
+UBOOT_DEPENDENCIES += firmware-ele-imx
+UBOOT_IMX_FW_FILES += $(FIRMWARE_ELE_IMX_AHAB_CONTAINER_IMAGE)
+endif
 
 define UBOOT_COPY_IMX_FW_FILES
 	$(foreach fw,$(UBOOT_IMX_FW_FILES),\
@@ -259,6 +267,11 @@ endif
 ifneq ($(ROCKCHIP_RKBIN_TEE_FILENAME),)
 UBOOT_MAKE_OPTS += TEE=$(BINARIES_DIR)/$(notdir $(ROCKCHIP_RKBIN_TEE_FILENAME))
 endif
+endif
+
+ifeq ($(BR2_TARGET_UBOOT_FORMAT_ADSP_LDR),y)
+UBOOT_BINS += u-boot.ldr
+UBOOT_DEPENDENCIES += host-adsp-ldr
 endif
 
 ifeq ($(BR2_TARGET_UBOOT_NEEDS_DTC),y)
@@ -311,7 +324,7 @@ endif
 # prior to u-boot 2013.10 the license info was in COPYING. Copy it so
 # legal-info finds it
 define UBOOT_COPY_OLD_LICENSE_FILE
-	if [ -f $(@D)/COPYING ]; then \
+	if [ -f $(@D)/COPYING ] && [ ! -f $(@D)/Licenses/gpl-2.0.txt ]; then \
 		$(INSTALL) -m 0644 -D $(@D)/COPYING $(@D)/Licenses/gpl-2.0.txt; \
 	fi
 endef
@@ -413,8 +426,12 @@ UBOOT_KCONFIG_OPTS = $(UBOOT_MAKE_OPTS) HOSTCC="$(HOSTCC_NOCCACHE)" HOSTLDFLAGS=
 ifeq ($(BR2_TARGET_UBOOT_DEFAULT_ENV_FILE_ENABLED),y)
 UBOOT_DEFAULT_ENV_FILE = $(call qstrip,$(BR2_TARGET_UBOOT_DEFAULT_ENV_FILE))
 define UBOOT_KCONFIG_DEFAULT_ENV_FILE
+	# Pre-2025.10
 	$(call KCONFIG_SET_OPT,CONFIG_USE_DEFAULT_ENV_FILE,y)
 	$(call KCONFIG_SET_OPT,CONFIG_DEFAULT_ENV_FILE,"$(shell readlink -f $(UBOOT_DEFAULT_ENV_FILE))")
+	# 2025.10 and later
+	$(call KCONFIG_SET_OPT,CONFIG_ENV_USE_DEFAULT_ENV_TEXT_FILE,y)
+	$(call KCONFIG_SET_OPT,CONFIG_ENV_DEFAULT_ENV_TEXT_FILE,"$(shell readlink -f $(UBOOT_DEFAULT_ENV_FILE))")
 endef
 endif
 endif # BR2_TARGET_UBOOT_BUILD_SYSTEM_LEGACY
@@ -524,6 +541,17 @@ endif
 
 endif # BR2_TARGET_UBOOT_ZYNQMP
 
+ifeq ($(BR2_TARGET_UBOOT_ZYNQ),y)
+UBOOT_ZYNQ_PS7_INIT = $(call qstrip,$(BR2_TARGET_UBOOT_ZYNQ_PS7_INIT_FILE))
+UBOOT_ZYNQ_PS7_INIT_PATH = $(shell readlink -f $(UBOOT_ZYNQ_PS7_INIT))
+
+ifneq ($(UBOOT_ZYNQ_PS7_INIT),)
+define UBOOT_ZYNQ_KCONFIG_PS7_INIT
+	$(call KCONFIG_SET_OPT,CONFIG_XILINX_PS_INIT_FILE,"$(UBOOT_ZYNQ_PS7_INIT_PATH)")
+endef
+endif
+endif # BR2_TARGET_UBOOT_ZYNQ
+
 define UBOOT_INSTALL_OMAP_IFT_IMAGE
 	cp -dpf $(@D)/$(UBOOT_BIN_IFT) $(BINARIES_DIR)/
 endef
@@ -566,6 +594,7 @@ define UBOOT_KCONFIG_FIXUP_CMDS
 	$(UBOOT_ZYNQMP_KCONFIG_PMUFW)
 	$(UBOOT_ZYNQMP_KCONFIG_PM_CFG)
 	$(UBOOT_ZYNQMP_KCONFIG_PSU_INIT)
+	$(UBOOT_ZYNQ_KCONFIG_PS7_INIT)
 	$(UBOOT_KCONFIG_DEFAULT_ENV_FILE)
 endef
 

@@ -4,12 +4,12 @@
 #
 ################################################################################
 
-PYTHON_CFFI_VERSION = 1.17.1
+PYTHON_CFFI_VERSION = 2.1.1
 PYTHON_CFFI_SOURCE = cffi-$(PYTHON_CFFI_VERSION).tar.gz
-PYTHON_CFFI_SITE = https://files.pythonhosted.org/packages/fc/97/c783634659c2920c3fc70419e3af40972dbaf758daa229a7d6ea6135c90d
+PYTHON_CFFI_SITE = https://files.pythonhosted.org/packages/9e/ef/008a1939e372c06329a3fce4279c02f328488f3526744906eeec3da7ad5f
 PYTHON_CFFI_SETUP_TYPE = setuptools
 PYTHON_CFFI_DEPENDENCIES = host-pkgconf libffi
-PYTHON_CFFI_LICENSE = MIT
+PYTHON_CFFI_LICENSE = MIT-0
 PYTHON_CFFI_LICENSE_FILES = LICENSE
 
 # This host package uses pkg-config to find libffi, so we have to

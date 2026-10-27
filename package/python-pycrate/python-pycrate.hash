@@ -1,5 +1,5 @@
 # md5, sha256 from https://pypi.org/pypi/pycrate/json
-md5  cd6b9bcfd92bfc74d3bbbea3c7c5d8bc  pycrate-0.7.8.tar.gz
-sha256  4c37aa2b1c3d64067668d015ec319dd94352ddcf6db495cb9a69033451c9f391  pycrate-0.7.8.tar.gz
+md5  094c4f8b45ce478dfa6efa2c52d42139  pycrate-0.8.1.tar.gz
+sha256  a408c942d219c646a5a81073b8036f48a81c4540dd1f25fda2f8bbde0607db98  pycrate-0.8.1.tar.gz
 # Locally computed sha256 checksums
 sha256  dc626520dcd53a22f727af3ee42c770e56c97a64fe3adb063799d8ab032fe551  license.txt
