@@ -1,0 +1,58 @@
+--- lrzsz-0.12.21rc/lib/xstrtol.c.orig	2025-10-17 15:37:08.643566888 -0400
++++ lrzsz-0.12.21rc/lib/xstrtol.c	2025-10-17 15:38:05.083228983 -0400
+@@ -65,13 +65,13 @@
+ 	}								\
+       while (0)
+ 
+-__unsigned long int __strtol ();
++__unsigned long int __strtol (const char *nptr, char **endptr, int base);
+ 
+ /* FIXME: comment.  */
+ 
+ strtol_error
+ #ifdef __cplusplus
+-__xstrtol (const char *s, char **ptr, int base, 
++__xstrtol (const char *s, char **ptr, int base,
+ 		__unsigned long int *val, const char *valid_suffixes)
+ #else
+ __xstrtol (s, ptr, base, val, valid_suffixes)
+
+--- lrzsz-0.12.21rc/lib/error.c.orig	2025-10-17 15:42:12.613496762 -0400
++++ lrzsz-0.12.21rc/lib/error.c	2025-10-17 15:42:36.189772124 -0400
+@@ -40,7 +40,7 @@
+ # include <stdlib.h>
+ # include <string.h>
+ #else
+-void exit ();
++void exit (int status);
+ #endif
+ 
+ #ifndef _
+
+--- lrzsz-0.12.21rc/src/zglobal.h.orig	2025-10-17 15:44:44.452940678 -0400
++++ lrzsz-0.12.21rc/src/zglobal.h	2025-10-17 15:46:15.478140313 -0400
+@@ -99,7 +99,7 @@
+ #  define strchr index
+ #  define strrchr rindex
+ # endif
+-char *strchr (), *strrchr ();
++char *strchr (const char *str, int c), *strrchr (const char *str, int c);
+ # ifndef HAVE_MEMCPY
+ #  define memcpy(d, s, n) bcopy ((s), (d), (n))
+ #  define memmove(d, s, n) bcopy ((s), (d), (n))
+@@ -130,7 +130,7 @@
+ #  endif
+ #endif
+ 
+-/* used to use #elif, but native braindead hpux 9.00 c compiler didn't 
++/* used to use #elif, but native braindead hpux 9.00 c compiler didn't
+  * understand it */
+ #ifdef HAVE_TERMIOS_H
+ /* get rid of warnings on SCO ODT 3.2 */
+@@ -373,7 +373,7 @@
+ 
+ int readline_internal __P ((unsigned int timeout));
+ void readline_purge __P ((void));
+-void readline_setup __P ((int fd, size_t readnum, 
++void readline_setup __P ((int fd, size_t readnum,
+ 	size_t buffer_size)) LRZSZ_ATTRIB_SECTION(lrzsz_rare);
