@@ -22,6 +22,9 @@ endif
 
 OPTEE_EXAMPLES_DEPENDENCIES = optee-client optee-os
 
+# TODO Remove cmake policy when upreving optee-examples
+OPTEE_EXAMPLES_CONF_OPTS = -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+
 # Trusted Application are not built from CMake due to ta_dev_kit dependencies.
 # We must build and install them on target.
 define OPTEE_EXAMPLES_BUILD_TAS

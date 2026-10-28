@@ -1,0 +1,35 @@
+--- optee-test-4.3.0/host/xtest/regression_4000.c.orig	2025-10-23 15:20:59.817369492 -0400
++++ optee-test-4.3.0/host/xtest/regression_4000.c	2025-10-23 15:28:19.963686160 -0400
+@@ -1292,6 +1292,9 @@
+  * https://tools.ietf.org/html/draft-sca-cfrg-sm3-02
+  * Appendix A.1
+  */
++#if __has_attribute(nonstring)
++__attribute__((nonstring))
++#endif
+ static const uint8_t hash_data_sm3_a1_in[3] = "abc";
+ 
+ static const uint8_t hash_data_sm3_a1_out[] = {
+
+--- optee-test-4.3.0/host/xtest/./regression_4000_data.h.orig	2025-10-23 15:30:54.995206878 -0400
++++ optee-test-4.3.0/host/xtest/./regression_4000_data.h	2025-10-23 15:32:39.428231332 -0400
+@@ -7914,6 +7914,9 @@
+ };
+ 
+ /* G/MT 0003 (SM2) Part 5 Annex C.2 - encryption/decryption */
++#if __has_attribute(nonstring)
++__attribute__((nonstring))
++#endif
+ static const uint8_t gmt_0003_part5_c2_sm2_testvector_ptx[19] =
+ /* M */
+ 	"encryption standard";
+@@ -8383,6 +8386,9 @@
+  * GM/T 0042-2015
+  * Section D.3 Test vector 1
+  */
++#if __has_attribute(nonstring)
++__attribute__((nonstring))
++#endif
+ static const uint8_t mac_data_sm3_d31_in[112] =
+ 	"abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomn"
+ 	"opnopqabcdbcdecdefdefgefghfghighijhijkijkljklmklmn"
