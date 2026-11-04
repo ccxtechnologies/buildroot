@@ -12,9 +12,6 @@ SEATD_LICENSE_FILES = LICENSE
 SEATD_INSTALL_STAGING = YES
 SEATD_CPE_ID_VALID = YES
 
-SEATD_CPE_ID_VENDOR = seatd_project
-SEATD_CPE_ID_PRODUCT = seatd
-
 SEATD_CONF_OPTS += \
 	-Dman-pages=disabled \
 	-Dexamples=disabled \
