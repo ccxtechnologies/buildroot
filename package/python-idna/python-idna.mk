@@ -11,5 +11,8 @@ PYTHON_IDNA_LICENSE = BSD-3-Clause
 PYTHON_IDNA_LICENSE_FILES = LICENSE.md
 PYTHON_IDNA_SETUP_TYPE = flit
 
+PYTHON_IDNA_CPE_ID_VENDOR = kjd
+PYTHON_IDNA_CPE_ID_PRODUCT = internationalized_domain_names_in_applications
+
 $(eval $(python-package))
 $(eval $(host-python-package))

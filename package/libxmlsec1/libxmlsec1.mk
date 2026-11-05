@@ -14,6 +14,9 @@ LIBXMLSEC1_DEPENDENCIES = libxml2 openssl
 HOST_LIBXMLSEC1_DEPENDENCIES = host-libxml2 host-openssl
 LIBXMLSEC1_AUTORECONF = YES
 
+LIBXMLSEC1_CPE_ID_VENDOR = xmlsec_project
+LIBXMLSEC1_CPE_ID_PRODUCT = xmlsec
+
 LIBXMLSEC1_CONF_OPTS = \
 	--enable-crypto-dl=no \
 	--with-openssl \
