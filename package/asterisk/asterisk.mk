@@ -4,6 +4,7 @@
 #
 ################################################################################
 
+ASTERISK_VERSION = 18.26.4
 ASTERISK_SITE = $(TOPDIR)/../thirdparty/asterisk
 ASTERISK_SITE_METHOD = local
 
@@ -15,7 +16,6 @@ ASTERISK_LICENSE_FILES = \
 	utils/db1-ast/include/db.h
 
 ASTERISK_CPE_ID_VENDOR = sangoma
-ASTERISK_CPE_ID_VERSION = 18.26.4
 ASTERISK_SELINUX_MODULES = asterisk
 
 # For patches 0002 and 0003
