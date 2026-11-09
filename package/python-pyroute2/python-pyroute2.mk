@@ -4,6 +4,7 @@
 #
 ################################################################################
 
+PYTHON_PYROUTE2_VERSION = 0.7.12
 PYTHON_PYROUTE2_SITE = $(TOPDIR)/../thirdparty/pyroute2
 PYTHON_PYROUTE2_SITE_METHOD = local
 
