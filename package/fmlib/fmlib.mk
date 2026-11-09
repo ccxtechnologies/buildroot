@@ -4,6 +4,7 @@
 #
 ################################################################################
 
+FMLIB_VERSION = lf-6.12.20-2.0.0
 FMLIB_SITE = $(TOPDIR)/../thirdparty/layerscape-fmlib
 FMLIB_SITE_METHOD = local
 FMLIB_LICENSE = BSD-3-Clause

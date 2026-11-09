@@ -4,6 +4,7 @@
 #
 ################################################################################
 
+FMC_VERSION = lf-6.6.23-2.0.0
 FMC_SITE = $(TOPDIR)/../thirdparty/layerscape-fmc
 FMC_SITE_METHOD = local
 FMC_LICENSE = MIT
