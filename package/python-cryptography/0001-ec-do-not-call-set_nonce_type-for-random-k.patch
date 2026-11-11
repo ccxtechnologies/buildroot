@@ -1,0 +1,11 @@
+--- a/src/rust/src/backend/ec.rs
++++ b/src/rust/src/backend/ec.rs
+@@ -280,8 +280,6 @@
+                     // See https://github.com/openssl/openssl/issues/23205
+                     signer.set_signature_md(&hash_function)?;
+                     signer.set_nonce_type(openssl::pkey_ctx::NonceType::DETERMINISTIC_K)?;
+-                } else {
+-                    signer.set_nonce_type(openssl::pkey_ctx::NonceType::RANDOM_K)?;
+                 }
+             } else {
+                 let _ = algo;
