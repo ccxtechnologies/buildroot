@@ -24,7 +24,7 @@ LINUX_SITE_METHOD = git
 ifneq ($(findstring linux-ccx-lts-6.18,$(LINUX_SITE)),)
 LINUX_CPE_ID_VERSION = 6.18.63
 else ifneq ($(findstring linux-ccx-lts-6.1,$(LINUX_SITE)),)
-LINUX_CPE_ID_VERSION = 6.1.157
+LINUX_CPE_ID_VERSION = 6.1.192
 endif
 ifeq ($(BR2_LINUX_KERNEL_CUSTOM_REPO_GIT_SUBMODULES),y)
 LINUX_GIT_SUBMODULES = YES
