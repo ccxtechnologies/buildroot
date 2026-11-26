@@ -1,0 +1,211 @@
+diff --git a/src/cryptography/hazmat/bindings/_rust/openssl/keys.pyi b/src/cryptography/hazmat/bindings/_rust/openssl/keys.pyi
+index 404057e..df689ad 100644
+--- a/src/cryptography/hazmat/bindings/_rust/openssl/keys.pyi
++++ b/src/cryptography/hazmat/bindings/_rust/openssl/keys.pyi
+@@ -16,6 +16,7 @@ def load_der_private_key(
+     backend: typing.Any = None,
+     *,
+     unsafe_skip_rsa_key_validation: bool = False,
++    unsafe_skip_ec_key_validation: bool = False,
+ ) -> PrivateKeyTypes: ...
+ def load_pem_private_key(
+     data: Buffer,
+@@ -23,6 +24,7 @@ def load_pem_private_key(
+     backend: typing.Any = None,
+     *,
+     unsafe_skip_rsa_key_validation: bool = False,
++    unsafe_skip_ec_key_validation: bool = False,
+ ) -> PrivateKeyTypes: ...
+ def load_der_public_key(
+     data: bytes,
+diff --git a/src/rust/cryptography-key-parsing/src/ec.rs b/src/rust/cryptography-key-parsing/src/ec.rs
+index 6f1a276..00dca3a 100644
+--- a/src/rust/cryptography-key-parsing/src/ec.rs
++++ b/src/rust/cryptography-key-parsing/src/ec.rs
+@@ -173,8 +173,5 @@ pub fn parse_pkcs1_private_key(
+     let ec_key =
+         openssl::ec::EcKey::from_private_components(&group, &private_number, &public_point)
+             .map_err(|_| KeyParsingError::InvalidKey)?;
+-    ec_key
+-        .check_key()
+-        .map_err(|_| KeyParsingError::InvalidKey)?;
+     Ok(openssl::pkey::PKey::from_ec_key(ec_key)?)
+ }
+diff --git a/src/rust/src/backend/ec.rs b/src/rust/src/backend/ec.rs
+index 95dfcbf..684673f 100644
+--- a/src/rust/src/backend/ec.rs
++++ b/src/rust/src/backend/ec.rs
+@@ -104,10 +104,16 @@ fn curve_supported(py: pyo3::Python<'_>, py_curve: pyo3::Bound<'_, pyo3::PyAny>)
+ pub(crate) fn private_key_from_pkey(
+     py: pyo3::Python<'_>,
+     pkey: &openssl::pkey::PKeyRef<openssl::pkey::Private>,
++    unsafe_skip_ec_key_validation: bool,
+ ) -> CryptographyResult<ECPrivateKey> {
+     let ec_key = pkey
+         .ec_key()
+         .map_err(|_| pyo3::exceptions::PyValueError::new_err("Invalid EC key"))?;
++    if !unsafe_skip_ec_key_validation {
++        ec_key
++            .check_key()
++            .map_err(|_| pyo3::exceptions::PyValueError::new_err("Invalid EC key"))?;
++    }
+     let curve = py_curve_from_curve(py, ec_key.group())?;
+     check_key_infinity(&ec_key)?;
+     Ok(ECPrivateKey {
+diff --git a/src/rust/src/backend/keys.rs b/src/rust/src/backend/keys.rs
+index 888f941..63d56c4 100644
+--- a/src/rust/src/backend/keys.rs
++++ b/src/rust/src/backend/keys.rs
+@@ -9,13 +9,14 @@ use crate::error::{CryptographyError, CryptographyResult};
+ use crate::{exceptions, x509};
+ 
+ #[pyo3::pyfunction]
+-#[pyo3(signature = (data, password, backend=None, *, unsafe_skip_rsa_key_validation=false))]
++#[pyo3(signature = (data, password, backend=None, *, unsafe_skip_rsa_key_validation=false, unsafe_skip_ec_key_validation=false))]
+ fn load_der_private_key<'p>(
+     py: pyo3::Python<'p>,
+     data: CffiBuf<'_>,
+     password: Option<CffiBuf<'_>>,
+     backend: Option<pyo3::Bound<'_, pyo3::PyAny>>,
+     unsafe_skip_rsa_key_validation: bool,
++    unsafe_skip_ec_key_validation: bool,
+ ) -> CryptographyResult<pyo3::Bound<'p, pyo3::PyAny>> {
+     let _ = backend;
+ 
+@@ -24,6 +25,7 @@ fn load_der_private_key<'p>(
+         data.as_bytes(),
+         password.as_ref().map(|v| v.as_bytes()),
+         unsafe_skip_rsa_key_validation,
++        unsafe_skip_ec_key_validation,
+     )
+ }
+ 
+@@ -32,6 +34,7 @@ pub(crate) fn load_der_private_key_bytes<'p>(
+     data: &[u8],
+     password: Option<&[u8]>,
+     unsafe_skip_rsa_key_validation: bool,
++    unsafe_skip_ec_key_validation: bool,
+ ) -> CryptographyResult<pyo3::Bound<'p, pyo3::PyAny>> {
+     type Parser = fn(
+         &[u8],
+@@ -70,23 +73,34 @@ pub(crate) fn load_der_private_key_bytes<'p>(
+                 ),
+             ));
+         }
+-        return private_key_from_parsed(py, parsed, unsafe_skip_rsa_key_validation);
++        return private_key_from_parsed(
++            py,
++            parsed,
++            unsafe_skip_rsa_key_validation,
++            unsafe_skip_ec_key_validation,
++        );
+     } else if let Some(Err(e)) = parsed {
+         return Err(e.into());
+     }
+ 
+     let parsed = cryptography_key_parsing::pkcs8::parse_encrypted_private_key(data, password)?;
+-    private_key_from_parsed(py, parsed, unsafe_skip_rsa_key_validation)
++    private_key_from_parsed(
++        py,
++        parsed,
++        unsafe_skip_rsa_key_validation,
++        unsafe_skip_ec_key_validation,
++    )
+ }
+ 
+ #[pyo3::pyfunction]
+-#[pyo3(signature = (data, password, backend=None, *, unsafe_skip_rsa_key_validation=false))]
++#[pyo3(signature = (data, password, backend=None, *, unsafe_skip_rsa_key_validation=false, unsafe_skip_ec_key_validation=false))]
+ fn load_pem_private_key<'p>(
+     py: pyo3::Python<'p>,
+     data: CffiBuf<'_>,
+     password: Option<CffiBuf<'_>>,
+     backend: Option<pyo3::Bound<'_, pyo3::PyAny>>,
+     unsafe_skip_rsa_key_validation: bool,
++    unsafe_skip_ec_key_validation: bool,
+ ) -> CryptographyResult<pyo3::Bound<'p, pyo3::PyAny>> {
+     let _ = backend;
+ 
+@@ -122,13 +136,19 @@ fn load_pem_private_key<'p>(
+             ),
+         ));
+     }
+-    private_key_from_parsed(py, parsed, unsafe_skip_rsa_key_validation)
++    private_key_from_parsed(
++        py,
++        parsed,
++        unsafe_skip_rsa_key_validation,
++        unsafe_skip_ec_key_validation,
++    )
+ }
+ 
+ fn private_key_from_pkey<'p>(
+     py: pyo3::Python<'p>,
+     pkey: &openssl::pkey::PKeyRef<openssl::pkey::Private>,
+     unsafe_skip_rsa_key_validation: bool,
++    unsafe_skip_ec_key_validation: bool,
+ ) -> CryptographyResult<pyo3::Bound<'p, pyo3::PyAny>> {
+     match pkey.id() {
+         openssl::pkey::Id::RSA => Ok(crate::backend::rsa::private_key_from_pkey(
+@@ -137,7 +157,11 @@ fn private_key_from_pkey<'p>(
+         )?
+         .into_pyobject(py)?
+         .into_any()),
+-        openssl::pkey::Id::EC => Ok(crate::backend::ec::private_key_from_pkey(py, pkey)?
++        openssl::pkey::Id::EC => Ok(crate::backend::ec::private_key_from_pkey(
++            py,
++            pkey,
++            unsafe_skip_ec_key_validation,
++        )?
+             .into_pyobject(py)?
+             .into_any()),
+         openssl::pkey::Id::X25519 => Ok(crate::backend::x25519::private_key_from_pkey(pkey)
+@@ -233,10 +257,16 @@ fn private_key_from_parsed(
+     py: pyo3::Python<'_>,
+     parsed: cryptography_key_parsing::ParsedPrivateKey,
+     unsafe_skip_rsa_key_validation: bool,
++    unsafe_skip_ec_key_validation: bool,
+ ) -> CryptographyResult<pyo3::Bound<'_, pyo3::PyAny>> {
+     match parsed {
+         cryptography_key_parsing::ParsedPrivateKey::Pkey(pkey) => {
+-            private_key_from_pkey(py, &pkey, unsafe_skip_rsa_key_validation)
++            private_key_from_pkey(
++                py,
++                &pkey,
++                unsafe_skip_rsa_key_validation,
++                unsafe_skip_ec_key_validation,
++            )
+         }
+     }
+ }
+@@ -463,7 +493,7 @@ mod tests {
+ 
+         pyo3::Python::attach(|py| {
+             let pkey = openssl::pkey::PKey::hmac(&[0; 32]).unwrap();
+-            assert!(private_key_from_pkey(py, &pkey, false).is_err());
++            assert!(private_key_from_pkey(py, &pkey, false, false).is_err());
+         });
+     }
+ }
+diff --git a/src/rust/src/pkcs12.rs b/src/rust/src/pkcs12.rs
+index 95ad727..552f450 100644
+--- a/src/rust/src/pkcs12.rs
++++ b/src/rust/src/pkcs12.rs
+@@ -603,7 +603,7 @@ fn load_key_and_certificates<'p>(
+ 
+     let private_key = if let Some(pkey) = p12.pkey {
+         let pkey_bytes = pkey.private_key_to_pkcs8()?;
+-        keys::load_der_private_key_bytes(py, &pkey_bytes, None, false)?
++        keys::load_der_private_key_bytes(py, &pkey_bytes, None, false, false)?
+     } else {
+         py.None().into_bound(py)
+     };
+@@ -649,7 +649,7 @@ fn load_pkcs12<'p>(
+ 
+     let private_key = if let Some(pkey) = p12.pkey {
+         let pkey_bytes = pkey.private_key_to_pkcs8()?;
+-        keys::load_der_private_key_bytes(py, &pkey_bytes, None, false)?
++        keys::load_der_private_key_bytes(py, &pkey_bytes, None, false, false)?
+     } else {
+         py.None().into_bound(py)
+     };
